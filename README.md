@@ -1,0 +1,2 @@
+# HotellAdmin
+the goodest hotel
