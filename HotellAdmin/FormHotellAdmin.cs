@@ -25,6 +25,7 @@ namespace HotellAdmin {
 		List<Order> orderDataList;
 
 		OrderData od = new OrderData();
+		RoomData rd = new RoomData();
 
 		public FormHotellAdmin() {
 			InitializeComponent();
@@ -45,8 +46,7 @@ namespace HotellAdmin {
 			// Hent data om alle rom fra en class som heter "RoomData"
 			// List<Room> roomData = RoomData.GetData(); --- Sånn ca. det burde se ut
 			// RoomData sin GetData funksjon må returnere en liste over rom
-			List<Room> roomData = new List<Room>(); // Placeholder
-			roomDataList = roomData;
+			roomDataList = rd.GetData();
 
 			if (roomDataList.Count != (floors * rooms)) {
 				ShowError("Feil med romdata."); // midlertidig feilhåndtering, burde endres?
@@ -56,8 +56,8 @@ namespace HotellAdmin {
 
 		private void ShowRoomData(int floor) {
 			// TODO
-			for (int i = 0; i < rooms; i++) {
-				// Legg data inn i boksene i formen
+			for (int i = 0; i < roomDataList.Count; i++) {
+				Console.WriteLine(roomDataList[i].number);
 			}
 
 		}

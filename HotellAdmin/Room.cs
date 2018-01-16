@@ -8,11 +8,11 @@ namespace HotellAdmin {
 
 	class Room {
 
-		int number;
-		int type;
-		bool status;
+		public int number;
+		public string type;
+		public bool status;
 
-		public Room(int number, int type, bool status) {
+		public Room(int number, string type, bool status) {
 			this.number = number;
 			this.type = type;
 			this.status = status;

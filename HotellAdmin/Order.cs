@@ -8,9 +8,9 @@ namespace HotellAdmin {
 
 	class Order {
 
-		string firstName;
-		string lastName;
-		int roomType;
+		public string firstName;
+		public string lastName;
+		public int roomType;
 
 		public Order(string firstName, string lastName, int roomType) {
 			this.firstName = firstName;
