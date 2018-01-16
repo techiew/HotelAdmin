@@ -14,11 +14,12 @@ namespace HotellAdmin {
 		}
 
 		public List<Room> GetData() {
-			DatabaseManager.Open();
+			
 			DataSet result = DatabaseManager.Query("SELECT * FROM hotellrom;");
 
 			if(result == null) {
 				Console.WriteLine("Null på dataset");
+				return null;
 			}
 
 			List<Room> rooms = new List<Room>();

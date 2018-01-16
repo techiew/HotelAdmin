@@ -8,25 +8,29 @@ using System.Data;
 
 namespace HotellAdmin {
 
-	class DatabaseManager {
+	static class DatabaseManager {
 
-		const string db =
-		@"server=46.9.246.190;database=hotell;port=24440;userid=admin;password=admin;";
 		static MySqlConnection conn = null;
 		static MySqlCommand cmd;
 		static MySqlCommandBuilder cb;
 		static MySqlDataAdapter da;
 		static DataSet ds;
-		
-		public static void Open() {
 
-			if (conn != null) return;
+		public static void Open(string server, string port, string database, string username, string password) {
+
+			if (conn != null) {
+				Console.WriteLine("En databasetilkobling eksisterer allerede");
+				return;
+			}
+
+			string connectionString = 
+				@"server="+server+";port="+port+";database="+database+";username="+username+";password="+password;
 
 			try {
 
-				conn = new MySqlConnection(db);
+				conn = new MySqlConnection(connectionString);
 				conn.Open();
-				Console.WriteLine("MySQL version : {0}", conn.ServerVersion);
+				Console.WriteLine("Koblet til database. MySQL versjon: {0}", conn.ServerVersion);
 
 			} catch (MySqlException ex) {
 				Console.WriteLine("Error: {0}", ex.ToString());
@@ -38,6 +42,7 @@ namespace HotellAdmin {
 
 			if (conn != null) {
 				conn.Close();
+				Console.WriteLine("Lukket databasetilkoblingen");
 			}
 
 		}
@@ -45,7 +50,7 @@ namespace HotellAdmin {
 		public static DataSet Query(string sql) {
 
 			if (conn == null) {
-				Console.WriteLine("Null på database");
+				Console.WriteLine("Ingen database er tilkoblet");
 				return null;
 			}
 
@@ -56,10 +61,6 @@ namespace HotellAdmin {
 			da.Fill(ds, "result");
 
 			return ds;
-		}
-
-		~DatabaseManager() {
-			Close();
 		}
 
 	}

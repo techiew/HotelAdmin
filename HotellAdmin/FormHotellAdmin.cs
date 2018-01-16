@@ -19,7 +19,7 @@ namespace HotellAdmin {
 	public partial class FormHotellAdmin : Form {
 
 		int floors = 4;
-		int rooms = 14;
+		int roomsPerFloor = 11; // sett til # av labels i rutene?
 		int selectedFloor = 1;
 		List<Room> roomDataList;
 		List<Order> orderDataList;
@@ -33,12 +33,22 @@ namespace HotellAdmin {
 
 		private void FormHotellAdmin_Load(object sender, EventArgs e) {
 			// RequestLogin(); // Logge inn for å bruke programmet?
+			OpenDatabase();
 			GetRoomData();
 			ShowRoomData(1);
 			GetOrderData();
 			ShowOrderData();
 			// ShowOrderSchema(); // Finn ut hvordan lasse vil ha det, manuelt eller automatisk laget skjema?
 
+			foreach (Control c in tableLayoutRoomsPanel.Controls) {
+				// Kan lage mouse event handlers for labels for rommene her
+			}
+
+		}
+
+		private void OpenDatabase() {
+			//string db = @"server=46.9.246.190;database=hotell;port=24440;userid=admin;password=admin;";
+			DatabaseManager.Open("46.9.246.190", "24440", "hotell", "admin", "admin");
 		}
 
 		private void GetRoomData() {
@@ -48,7 +58,7 @@ namespace HotellAdmin {
 			// RoomData sin GetData funksjon må returnere en liste over rom
 			roomDataList = rd.GetData();
 
-			if (roomDataList.Count != (floors * rooms)) {
+			if (roomDataList.Count != (floors * roomsPerFloor)) {
 				ShowError("Feil med romdata."); // midlertidig feilhåndtering, burde endres?
 			} 
 
@@ -73,11 +83,10 @@ namespace HotellAdmin {
                 string fornavn = orderDataList[i].firstName;
                 string etternavn = orderDataList[i].lastName;
                 string romType = orderDataList[i].roomType;
-                string bestilling = fornavn + " " + etternavn + " " + romType;
-                listBox1.Items.Add(bestilling);
+                string bestilling = etternavn + ", " + fornavn + " - " + romType;
+                listBoxOrders.Items.Add(bestilling);
              //   Console.WriteLine(bestilling);    bare en liten sjekker boi
             }
-
 
         }
 
@@ -90,6 +99,7 @@ namespace HotellAdmin {
 		private void SyncOnDatabaseUpdate() {
 			// TODO ?
 			// Sync XML med database når en oppdatering skjer fra programmet vårt
+			// Kanskje bruke DatabaseManager til å synce med xml?
 		}
 
 		private void ShowError(string errorMsg) {
