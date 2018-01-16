@@ -23,7 +23,6 @@ namespace HotellAdmin {
 		int selectedFloor = 1;
 		List<Room> roomDataList;
 		List<Order> orderDataList;
-        //test
 
 		OrderData od = new OrderData();
 		RoomData rd = new RoomData();
@@ -34,7 +33,6 @@ namespace HotellAdmin {
 
 		private void FormHotellAdmin_Load(object sender, EventArgs e) {
 			// RequestLogin(); // Logge inn for å bruke programmet?
-			// XDDD
 			GetRoomData();
 			ShowRoomData(1);
 			GetOrderData();
@@ -71,8 +69,7 @@ namespace HotellAdmin {
 
 		private void ShowOrderData() {
 
-            for (int i = 0; i <= roomDataList.Count; i++)
-            {
+            for (int i = 0; i <= roomDataList.Count; i++) {
                 string fornavn = orderDataList[i].firstName;
                 string etternavn = orderDataList[i].lastName;
                 string romType = orderDataList[i].roomType;
