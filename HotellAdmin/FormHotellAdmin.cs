@@ -33,6 +33,7 @@ namespace HotellAdmin {
 
 		private void FormHotellAdmin_Load(object sender, EventArgs e) {
 			// RequestLogin(); // Logge inn for å bruke programmet?
+			// XDDD
 			GetRoomData();
 			ShowRoomData(1);
 			GetOrderData();
