@@ -63,22 +63,24 @@ namespace HotellAdmin {
 		}
 
 		private void GetOrderData() {
-			// TODO
-			// Hent data om alle bestillinger fra en class som heter "OrderData"
-			// List<Order> orderData = OrderData.GetData(); --- Sånn ca. det burde se ut
-			od.GetData();
-			// OrderData sin GetData funksjon må returnere en liste over bestillinger
-			List<Order> orderData = new List<Order>(); // Placeholder
-			orderDataList = orderData;
-		}
+            OrderData OrderData = new OrderData();
+            orderDataList = OrderData.ReadTable();
+        }
 
 		private void ShowOrderData() {
-			// TODO
-			for(int i = 0; i < orderDataList.Count; i++) {
-				// Legg bestillinger i listen til høyre
-			}
 
-		}
+            for (int i = 0; i <= roomDataList.Count; i++)
+            {
+                string fornavn = orderDataList[i].firstName;
+                string etternavn = orderDataList[i].lastName;
+                string romType = orderDataList[i].roomType;
+                string bestilling = fornavn + " " + etternavn + " " + romType;
+                listBox1.Items.Add(bestilling);
+             //   Console.WriteLine(bestilling);    bare en liten sjekker boi
+            }
+
+
+        }
 
 		private void MakeNewOrder() {
 			// TODO

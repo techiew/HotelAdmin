@@ -10,9 +10,9 @@ namespace HotellAdmin {
 
 		public string firstName;
 		public string lastName;
-		public int roomType;
+		public string roomType;
 
-		public Order(string firstName, string lastName, int roomType) {
+		public Order(string firstName, string lastName, string roomType) {
 			this.firstName = firstName;
 			this.lastName = lastName;
 			this.roomType = roomType;
