@@ -63,6 +63,7 @@ namespace HotellAdmin {
 		}
 
 		private void GetOrderData() {
+			// XD
 			// TODO
 			// Hent data om alle bestillinger fra en class som heter "OrderData"
 			// List<Order> orderData = OrderData.GetData(); --- Sånn ca. det burde se ut
