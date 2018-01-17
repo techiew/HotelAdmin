@@ -19,8 +19,12 @@ namespace HotellAdmin {
 		public static void Open(string server, string port, string database, string username, string password) {
 
 			if (conn != null) {
-				Console.WriteLine("En databasetilkobling eksisterer allerede");
-				return;
+
+				if (conn.State == ConnectionState.Open) {
+					Console.WriteLine("Open: En databasetilkobling eksisterer allerede");
+					return;
+				}
+
 			}
 
 			string connectionString = 
@@ -30,7 +34,7 @@ namespace HotellAdmin {
 
 				conn = new MySqlConnection(connectionString);
 				conn.Open();
-				Console.WriteLine("Koblet til database. MySQL versjon: {0}", conn.ServerVersion);
+				Console.WriteLine("Open: Koblet til database. MySQL versjon: {0}", conn.ServerVersion);
 
 			} catch (MySqlException ex) {
 				Console.WriteLine("Error: {0}", ex.ToString());
@@ -40,19 +44,23 @@ namespace HotellAdmin {
 
 		public static void Close() {
 
-			if (conn != null) {
+			if (conn.State == ConnectionState.Open) {
 				conn.Close();
-				Console.WriteLine("Lukket databasetilkoblingen");
+				Console.WriteLine("Close: Lukket databasetilkoblingen");
+			} else {
+				Console.WriteLine("Close: Ingen database er tilkoblet");
 			}
 
 		}
 
 		public static DataSet Query(string sql) {
 
-			if (conn == null) {
-				Console.WriteLine("Ingen database er tilkoblet");
+			if (conn == null || conn.State == ConnectionState.Closed) {
+				Console.WriteLine("Query: Ingen database er tilkoblet");
 				return null;
 			}
+
+			Console.WriteLine(sql);
 
 			cmd = new MySqlCommand(sql, conn);
 			da = new MySqlDataAdapter(cmd);

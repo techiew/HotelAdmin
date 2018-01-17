@@ -40,6 +40,10 @@ namespace HotellAdmin {
 			ShowOrderData();
 			// ShowOrderSchema(); // Finn ut hvordan lasse vil ha det, manuelt eller automatisk laget skjema?
 
+			// Disse stopper ekstrem lag og CPU usage når vi resizer
+			ResizeBegin += new EventHandler(FormHotellAdmin_ResizeBegin);
+			ResizeEnd += new EventHandler(FormHotellAdmin_ResizeEnd);
+
 			foreach (Control c in tableLayoutRoomsPanel.Controls) {
 				// Kan lage mouse event handlers for labels for rommene her
 			}
@@ -104,6 +108,18 @@ namespace HotellAdmin {
 
 		private void ShowError(string errorMsg) {
 			// TODO
+		}
+
+		private void FormHotellAdmin_ResizeBegin(Object sender, EventArgs e) {
+			SuspendLayout();
+		}
+
+		private void FormHotellAdmin_ResizeEnd(Object sender, EventArgs e) {
+			ResumeLayout();
+		}
+
+		~FormHotellAdmin() {
+			DatabaseManager.Close();
 		}
 
 	}
