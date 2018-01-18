@@ -25,12 +25,13 @@ namespace HotellAdmin {
 			List<Room> rooms = new List<Room>();
 			int number;
 			string type;
-			bool status;
+			int price;
 
 			foreach(DataRow row in result.Tables["result"].Rows) {
 				number = (int)row["romID"];
 				type = (string)row["romType"];
-				rooms.Add(new Room(number, type, false));
+				price = (int)row["pris"];
+				rooms.Add(new Room(number, type, price));
 			}
 
 			return rooms;

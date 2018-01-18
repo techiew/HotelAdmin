@@ -31,11 +31,9 @@ namespace HotellAdmin {
 				@"server="+server+";port="+port+";database="+database+";username="+username+";password="+password;
 
 			try {
-
 				conn = new MySqlConnection(connectionString);
 				conn.Open();
 				Console.WriteLine("Open: Koblet til database. MySQL versjon: {0}", conn.ServerVersion);
-
 			} catch (MySqlException ex) {
 				Console.WriteLine("Error: {0}", ex.ToString());
 			} 

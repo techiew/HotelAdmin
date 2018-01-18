@@ -13,6 +13,7 @@ using System.Windows.Forms;
 // RoomData.cs - Håndtere henting av romdata
 // DatabaseManager.cs - Håndtere funksjoner for SQL kommandoer, og åpne/lukke DB tilkobling
 // Både RoomData og OrderData kan bruke DatabaseManager.cs
+// BookingData.cs - Hente data om booka rom, adde en funksjon som viser hvilke rom som er ledig og opptatt.
 
 namespace HotellAdmin {
 
@@ -23,9 +24,13 @@ namespace HotellAdmin {
 		int selectedFloor = 1;
 		List<Room> roomDataList;
 		List<Order> orderDataList;
+		List<Label> roomLabelList = new List<Label>();
 
 		OrderData od = new OrderData();
 		RoomData rd = new RoomData();
+
+		Color roomOpen = Color.FromArgb(50, 205, 50);
+		Color roomClosed = Color.FromArgb(176, 23, 31);
 
 		public FormHotellAdmin() {
 			InitializeComponent();
@@ -45,7 +50,14 @@ namespace HotellAdmin {
 			ResizeEnd += new EventHandler(FormHotellAdmin_ResizeEnd);
 
 			foreach (Control c in tableLayoutRoomsPanel.Controls) {
-				// Kan lage mouse event handlers for labels for rommene her
+				// Bruk denne når du lager drag & drop JORGON ---------------- !!!11!!
+			}
+
+			buttonFirstFloor.MouseDown += new MouseEventHandler(buttonFirstFloor_MouseDown);
+			buttonSecondFloor.MouseDown += new MouseEventHandler(buttonSecondFloor_MouseDown);
+			buttonThirdFloor.MouseDown += new MouseEventHandler(buttonThirdFloor_MouseDown);
+			foreach (Control c in tableLayoutFloorButtons.Controls.OfType<Button>()) {
+				c.MouseDown += new MouseEventHandler(buttons_MouseDown);
 			}
 
 		}
@@ -62,16 +74,48 @@ namespace HotellAdmin {
 			// RoomData sin GetData funksjon må returnere en liste over rom
 			roomDataList = rd.GetData();
 
-			if (roomDataList.Count != (floors * roomsPerFloor)) {
-				ShowError("Feil med romdata."); // midlertidig feilhåndtering, burde endres?
-			} 
+			//if (roomDataList.Count != (floors * roomsPerFloor)) {
+			//	ShowError("Feil med romdata."); // midlertidig feilhåndtering, burde endres?
+			//} 
 
 		}
 
 		private void ShowRoomData(int floor) {
-			// TODO
-			for (int i = 0; i < roomDataList.Count; i++) {
-				Console.WriteLine(roomDataList[i].number);
+			if(roomLabelList.Count == 0) {
+
+				foreach(Control c in tableLayoutRoomsPanel.Controls.OfType<Label>()) {
+					roomLabelList.Add((Label)c);
+				}
+
+			}
+
+			Console.WriteLine("Viser rom for " + floor + ". etasje");
+			int index = (roomsPerFloor * (floor - 1));
+			Room room;
+
+			for (int i = 0;  i < roomLabelList.Count; i++) {
+				Console.WriteLine(index + " | " + roomDataList.ElementAtOrDefault(index));
+				Color buttonColor = Color.LightGray;
+				string buttonText = "null";
+
+				if (roomDataList.ElementAtOrDefault(index) != null) {
+					room = roomDataList[index];
+					buttonText =
+						"Rom " + (room.number + 1) + "\n" +
+						room.type + "\n" +
+						room.price + "\n"; // TODO Skal egentlig vise status på rommet
+					buttonColor = (room.status) ? roomClosed : roomOpen;
+				} else {
+					buttonText =
+						"Rom " + (index + 1) + "\n" +
+						"Romtype\n" +
+						"Ledig/opptatt";
+				}
+
+				roomLabelList[i].Text = buttonText;
+				roomLabelList[i].BackColor = buttonColor;
+
+				index++;
 			}
 
 		}
@@ -82,8 +126,8 @@ namespace HotellAdmin {
         }
 
 		private void ShowOrderData() {
-
-            for (int i = 0; i <= roomDataList.Count; i++) {
+			// IKKE BRUK NORSK !!!!!111 -------------------------------- TRIGGRD ... CONSISTENCY!!!
+			for (int i = 0; i < orderDataList.Count; i++) { 
                 string fornavn = orderDataList[i].firstName;
                 string etternavn = orderDataList[i].lastName;
                 string romType = orderDataList[i].roomType;
@@ -96,18 +140,20 @@ namespace HotellAdmin {
 
 		private void MakeNewOrder() {
 			// TODO
-			// OrderData.MakeOrder(parameters); ELLER
+			// For å manuelt lage en bestilling fra programmet
+			// Bruk OrderData.MakeOrder(parameters); ELLER
 			// Legg funksjonen over i en action handler for skjemaet
 		}
 
 		private void SyncOnDatabaseUpdate() {
 			// TODO ?
 			// Sync XML med database når en oppdatering skjer fra programmet vårt
-			// Kanskje bruke DatabaseManager til å synce med xml?
+			// Kanskje bruke DatabaseManager til å synce med xml
 		}
 
 		private void ShowError(string errorMsg) {
 			// TODO
+			// vis popup vindu med error
 		}
 
 		private void FormHotellAdmin_ResizeBegin(Object sender, EventArgs e) {
@@ -118,10 +164,39 @@ namespace HotellAdmin {
 			ResumeLayout();
 		}
 
+		// En destructor for å lukke databasetilkoblingen når vi lukker programmet
 		~FormHotellAdmin() {
 			DatabaseManager.Close();
 		}
 
+		//Burde egentlig ha en felles event handler for disse, men knappene skal gjøre litt forskjellige ting.
+		//så en felles handler hadde gjort koden mer DRY, men blir mer knotete å legge til forskjellige funksjonalitet
+		//EDIT: adda en felles handler, men fortsatt ikke helt DRY
+		//EDIT: nvm fiksa alt, men bare lar det her stå
+		private void buttonFirstFloor_MouseDown(object sender, EventArgs e) {
+			selectedFloor = 1;
+		}
+
+		private void buttonSecondFloor_MouseDown(object sender, EventArgs e) {
+			selectedFloor = 2;
+		}
+
+		private void buttonThirdFloor_MouseDown(object sender, EventArgs e) {
+			selectedFloor = 3;
+		}
+
+		private void buttons_MouseDown(object sender, MouseEventArgs e) {
+			foreach (Control c in tableLayoutFloorButtons.Controls.OfType<Button>()) {
+				c.BackColor = Color.White;
+				c.ForeColor = Color.Black;
+			}
+
+			Button button = (sender as Button);
+			button.BackColor = Color.CornflowerBlue;
+			button.ForeColor = Color.White;
+
+			ShowRoomData(selectedFloor);
+		}
 	}
 
 }
