@@ -13,7 +13,7 @@ using System.Windows.Forms;
 // RoomData.cs - Håndtere henting av romdata
 // DatabaseManager.cs - Håndtere funksjoner for SQL kommandoer, og åpne/lukke DB tilkobling
 // Både RoomData og OrderData kan bruke DatabaseManager.cs
-// BookingData.cs - Hente data om booka rom, adde en funksjon som viser hvilke rom som er ledig og opptatt.
+// BookingData.cs ???? - Hente data om booka rom, adde en funksjon som viser hvilke rom som er ledig og opptatt.
 
 namespace HotellAdmin {
 
@@ -41,8 +41,8 @@ namespace HotellAdmin {
 			OpenDatabase();
 			GetRoomData();
 			ShowRoomData(1);
-			GetOrderData();
-			ShowOrderData();
+			//GetOrderData();
+			//ShowOrderData();
 			// ShowOrderSchema(); // Finn ut hvordan lasse vil ha det, manuelt eller automatisk laget skjema?
 
 			// Disse stopper ekstrem lag og CPU usage når vi resizer
@@ -56,6 +56,7 @@ namespace HotellAdmin {
 			buttonFirstFloor.MouseDown += new MouseEventHandler(buttonFirstFloor_MouseDown);
 			buttonSecondFloor.MouseDown += new MouseEventHandler(buttonSecondFloor_MouseDown);
 			buttonThirdFloor.MouseDown += new MouseEventHandler(buttonThirdFloor_MouseDown);
+
 			foreach (Control c in tableLayoutFloorButtons.Controls.OfType<Button>()) {
 				c.MouseDown += new MouseEventHandler(buttons_MouseDown);
 			}
@@ -64,7 +65,7 @@ namespace HotellAdmin {
 
 		private void OpenDatabase() {
 			//string db = @"server=46.9.246.190;database=hotell;port=24440;userid=admin;password=admin;";
-			DatabaseManager.Open("46.9.246.190", "24440", "hotell", "admin", "admin");
+			DatabaseManager.Open("localhost", "24440", "hotell", "admin", "admin");
 		}
 
 		private void GetRoomData() {
@@ -81,6 +82,11 @@ namespace HotellAdmin {
 		}
 
 		private void ShowRoomData(int floor) {
+
+			if(roomDataList == null || roomDataList.Count == 0) {
+				return;
+			}
+
 			if(roomLabelList.Count == 0) {
 
 				foreach(Control c in tableLayoutRoomsPanel.Controls.OfType<Label>()) {
@@ -172,7 +178,7 @@ namespace HotellAdmin {
 		//Burde egentlig ha en felles event handler for disse, men knappene skal gjøre litt forskjellige ting.
 		//så en felles handler hadde gjort koden mer DRY, men blir mer knotete å legge til forskjellige funksjonalitet
 		//EDIT: adda en felles handler, men fortsatt ikke helt DRY
-		//EDIT: nvm fiksa alt, men bare lar det her stå
+		//EDIT: nvm fiksa alt, men bare lar det her stå, ikke fjern pls
 		private void buttonFirstFloor_MouseDown(object sender, EventArgs e) {
 			selectedFloor = 1;
 		}

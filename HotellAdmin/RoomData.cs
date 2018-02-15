@@ -18,7 +18,7 @@ namespace HotellAdmin {
 			DataSet result = DatabaseManager.Query("SELECT * FROM hotellrom;");
 
 			if(result == null) {
-				Console.WriteLine("Null på dataset");
+				Console.WriteLine("Room.GetData: Datasettet er tomt");
 				return null;
 			}
 
