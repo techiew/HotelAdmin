@@ -41,16 +41,18 @@ namespace HotellAdmin {
 			OpenDatabase();
 			GetRoomData();
 			ShowRoomData(1);
-			//GetOrderData();
-			//ShowOrderData();
+			GetOrderData();
+			ShowOrderData();
 			// ShowOrderSchema(); // Finn ut hvordan lasse vil ha det, manuelt eller automatisk laget skjema?
 
 			// Disse stopper ekstrem lag og CPU usage når vi resizer
 			ResizeBegin += new EventHandler(FormHotellAdmin_ResizeBegin);
 			ResizeEnd += new EventHandler(FormHotellAdmin_ResizeEnd);
 
-			foreach (Control c in tableLayoutRoomsPanel.Controls) {
-				// Bruk denne når du lager drag & drop JORGON ---------------- !!!11!!
+			foreach (Control c in tableLayoutRoomsPanel.Controls.OfType<Label>()) {
+				//c.MouseDown += new MouseEventHandler(labels_MouseDown);
+				//c.DragDrop += new MouseEventHandler(labels_DragDrop);
+				//c.DragOver += new MouseEventHandler(labels_DragOver);
 			}
 
 			buttonFirstFloor.MouseDown += new MouseEventHandler(buttonFirstFloor_MouseDown);
