@@ -10,13 +10,11 @@ namespace HotellAdmin {
 
 		public int number;
 		public string type;
-		public int price;
 		public bool status;
 
-		public Room(int number, string type, int price) {
+		public Room(int number, string type) {
 			this.number = number;
 			this.type = type;
-			this.price = price;
 			status = false;
 		}
 

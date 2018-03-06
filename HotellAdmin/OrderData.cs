@@ -4,32 +4,45 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Data;
-using MySql.Data.MySqlClient;
 
 namespace HotellAdmin {
 
 	class OrderData {
 
-        public List<Order> ReadTable() {
+        public List<Order> GetData() {
 
-            DataSet visData = DatabaseManager.Query("SELECT bestillingID, fornavn, etternavn, fradato, tildato FROM bestillinger;"); // Må adde "WHERE status = false" eller hva faen                                                                                            
+            DataSet result = DatabaseManager.Query("SELECT bestillingID, romtype, fradato, tildato, status, tlf, fornavn, etternavn FROM bestillinger;"); // Må adde "WHERE status = false" eller hva faen                                                                                            
             List<Order> OrderList = new List<Order>();
-            string fornavn;
-            string etternavn;
-            int bestillingID;
-            DateTime fraDato;
-            DateTime tilDato;
 
-            foreach (DataRow rad in visData.Tables["result"].Rows) {
-                fornavn = (string)rad["fornavn"];
-                etternavn = (string)rad["etternavn"];
-                bestillingID = (int)rad["bestillingID"];
-                fraDato = (DateTime)rad["fradato"];
-                tilDato = (DateTime)rad["tildato"];
-                var fraDatoString = fraDato.ToShortDateString();
-                var tilDatoString = tilDato.ToShortDateString();
-                Order Order = new Order(fornavn, etternavn, bestillingID, fraDatoString, tilDatoString);
-                OrderList.Add(Order);
+			if (result == null) {
+				Console.WriteLine("OrderData.GetData: Datasettet er tomt");
+				return null;
+			}
+
+			int orderID;
+			string roomType;
+			DateTime fromDate;
+			DateTime toDate;
+			bool status;
+			int phoneNumber;
+			string firstName;
+			string lastName;
+
+			foreach (DataRow row in result.Tables["result"].Rows) {
+				orderID = (int)row["bestillingID"];
+				roomType = (string)row["romtype"];
+				fromDate = (DateTime)row["fradato"];
+				toDate = (DateTime)row["tildato"];
+				status = ((string)row["status"] == "false") ? false : true;
+				phoneNumber = (int)row["tlf"];
+				firstName = (string)row["fornavn"];
+				lastName = (string)row["etternavn"];
+
+				string fromDateString = fromDate.ToShortDateString();
+                string toDateString = toDate.ToShortDateString();
+                Order order = new Order(orderID, roomType, fromDateString, toDateString,
+					status, phoneNumber, firstName, lastName);
+                OrderList.Add(order);
             }
 
             return OrderList;

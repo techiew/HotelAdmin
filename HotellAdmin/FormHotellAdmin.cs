@@ -101,10 +101,12 @@ namespace HotellAdmin
 
 				if (roomDataList.ElementAtOrDefault(index) != null) {
 					room = roomDataList[index];
+
 					buttonText =
 						"Rom " + (room.number + 1) + "\n" +
-						room.type + "\n" +
-						room.price + "\n"; // TODO Skal egentlig vise status på rommet
+						room.type + "\n";
+						//room.price + "\n"; // TODO Skal egentlig vise status på rommet
+
 					buttonColor = (room.status) ? roomClosed : roomOpen;
 				} else {
 					buttonText =
@@ -122,20 +124,23 @@ namespace HotellAdmin
 		}
 
 		private void GetOrderData() {
-            OrderData OrderData = new OrderData();
-            orderDataList = OrderData.ReadTable();
+            orderDataList = od.GetData();
         }
 
 		private void ShowOrderData() {
 			// IKKE BRUK NORSK !!!!!111 -------------------------------- TRIGGRD ... CONSISTENCY!!!
-			for (int i = 0; i < orderDataList.Count; i++) { 
-                string fornavn = orderDataList[i].firstName;
-                string etternavn = orderDataList[i].lastName;
-                string fraDato = orderDataList[i].fraDato;     // Istedet for romtype skal vi ha fradato og tildato må også hente bestillingID
-                string tilDato = orderDataList[i].tilDato;
-                int bestillingID = orderDataList[i].bestillingID;
-                string bestilling = fornavn + " " + etternavn + " " + fraDato + " " + tilDato + " " + bestillingID;
-                listBoxOrders.Items.Add(bestilling);
+			for (int i = 0; i < orderDataList.Count; i++) {
+				int orderID = orderDataList[i].orderID;
+				string roomType = orderDataList[i].roomType;
+				string fromDate = orderDataList[i].fromDate;     // Istedet for romtype skal vi ha fradato og tildato må også hente bestillingID
+				string toDate = orderDataList[i].toDate;
+				bool status = orderDataList[i].status;
+				int phoneNumber = orderDataList[i].phoneNumber;
+				string firstName = orderDataList[i].firstName;
+                string lastName = orderDataList[i].lastName;
+
+				string order = orderID + " " + firstName + " " + lastName + " " + fromDate + " " + toDate;
+                listBoxOrders.Items.Add(order);
              //   Console.WriteLine(bestilling);    bare en liten sjekker boi
             }
 
@@ -189,6 +194,7 @@ namespace HotellAdmin
 		}
 
 		private void buttons_MouseDown(object sender, MouseEventArgs e) {
+
 			foreach (Control c in tableLayoutFloorButtons.Controls.OfType<Button>()) {
 				c.BackColor = Color.White;
 				c.ForeColor = Color.Black;
@@ -200,39 +206,42 @@ namespace HotellAdmin
 
 			ShowRoomData(selectedFloor);
         }
-        private void listBoxOrders_MouseDown(object sender, MouseEventArgs e)
-        {
+
+        private void listBoxOrders_MouseDown(object sender, MouseEventArgs e) {
             int index = listBoxOrders.IndexFromPoint(e.X, e.Y);
+
             if (index == -1) return;
+
             string s = listBoxOrders.Items[index].ToString();
             Console.WriteLine(s);
             DragDropEffects dde1 = DoDragDrop(s, DragDropEffects.All);
-            if (dde1 == DragDropEffects.All)
-            {
+
+            if (dde1 == DragDropEffects.All) {
                 listBoxOrders.Items.RemoveAt(index);
             }
-        }
-        private void labels_DragDrop(object sender, DragEventArgs e)
-        {
-            if (e.Data.GetDataPresent(DataFormats.StringFormat))
-            {
-                string stringFromListBox = (string)e.Data.GetData(DataFormats.StringFormat);
-                string[] stringBestilling = stringFromListBox.Split(' '); //Splitter opp stringen fra listeboksen
-                string fraDato = stringBestilling[2];   
-                string tilDato = stringBestilling[3];
-                string bestillingID = stringBestilling[4];
 
-                string stringFromLabel = (sender as Label).Text;
-                string[] stringLabel = stringFromLabel.Split('\n'); //Splitter opp de tre linjene stringFromLabel hadde
-                string romInfo = stringLabel[0];                    //Henter første linje fra stringFromLabel, dette er rom X
-                string[] stringLabel2 = romInfo.Split(' ');          //Splitter opp stringen romInfo
-                string romID = stringLabel2[1];                      //Henter det andre tegnet i stringen som er tallet
-                string sqlQuery = ("INSERT INTO booking (romID, bestillingID, fradato, tildato) VALUES (" + romID + ", " + bestillingID + ", '" + fraDato + "', '" + tilDato + "');");
-                DatabaseManager.Query(sqlQuery);
-            }
         }
-        private void labels_DragOver(object sender, DragEventArgs e)
-        {
+        private void labels_DragDrop(object sender, DragEventArgs e) {
+
+			if (e.Data.GetDataPresent(DataFormats.StringFormat)) {
+                string listboxItemString = (string)e.Data.GetData(DataFormats.StringFormat);
+                string[] splitItemString = listboxItemString.Split(' '); //Splitter opp stringen fra listeboksen
+                string fromDate = splitItemString[2];   
+                string toDate = splitItemString[3];
+                string orderID = splitItemString[4];
+
+                string labelString = (sender as Label).Text;
+                string[] splitLabelString = labelString.Split('\n'); //Splitter opp de tre linjene stringFromLabel hadde
+                string roomInfo = splitLabelString[0];                    //Henter første linje fra stringFromLabel, dette er rom X
+                string[] splitRoomInfo = roomInfo.Split(' ');          //Splitter opp stringen romInfo
+                string roomID = splitRoomInfo[1];                      //Henter det andre tegnet i stringen som er tallet
+
+				DatabaseManager.Query("INSERT INTO booking (romID, bestillingID, fradato, tildato) VALUES (" + roomID + ", " + orderID + ", " + fromDate + ", " + toDate + ");");
+			}
+
+        }
+
+        private void labels_DragOver(object sender, DragEventArgs e) {
             e.Effect = DragDropEffects.All;
         }
  
