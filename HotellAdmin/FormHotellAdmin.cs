@@ -68,10 +68,6 @@ namespace HotellAdmin
 		}
 
 		private void GetRoomData() {
-			// TODO
-			// Hent data om alle rom fra en class som heter "RoomData"
-			// List<Room> roomData = RoomData.GetData(); --- Sånn ca. det burde se ut
-			// RoomData sin GetData funksjon må returnere en liste over rom
 			roomDataList = rd.GetData();
 
 			//if (roomDataList.Count != (floors * roomsPerFloor)) {

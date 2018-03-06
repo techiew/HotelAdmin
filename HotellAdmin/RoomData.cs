@@ -15,7 +15,7 @@ namespace HotellAdmin {
 
 		public List<Room> GetData() {
 			
-			DataSet result = DatabaseManager.Query("SELECT * FROM hotellrom;");
+			DataSet result = DatabaseManager.Query("SELECT * FROM rom;");
 
 			if(result == null) {
 				Console.WriteLine("Room.GetData: Datasettet er tomt");
@@ -29,7 +29,7 @@ namespace HotellAdmin {
 
 			foreach(DataRow row in result.Tables["result"].Rows) {
 				number = (int)row["romID"];
-				type = (string)row["romType"];
+				type = (string)row["romtype"];
 				price = (int)row["pris"];
 				rooms.Add(new Room(number, type, price));
 			}
