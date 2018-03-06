@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 // FormHotellAdmin.cs - Håndtere visning av data
@@ -15,9 +12,10 @@ using System.Windows.Forms;
 // Både RoomData og OrderData kan bruke DatabaseManager.cs
 // BookingData.cs ???? - Hente data om booka rom, adde en funksjon som viser hvilke rom som er ledig og opptatt.
 
-namespace HotellAdmin {
+namespace HotellAdmin
+{
 
-	public partial class FormHotellAdmin : Form {
+    public partial class FormHotellAdmin : Form {
 
 		int floors = 4;
 		int roomsPerFloor = 11; // sett til # av labels i rutene?
@@ -41,8 +39,8 @@ namespace HotellAdmin {
 			OpenDatabase();
 			GetRoomData();
 			ShowRoomData(1);
-			//GetOrderData();
-			//ShowOrderData();
+			GetOrderData();
+			ShowOrderData();
 			// ShowOrderSchema(); // Finn ut hvordan lasse vil ha det, manuelt eller automatisk laget skjema?
 
 			// Disse stopper ekstrem lag og CPU usage når vi resizer
@@ -50,8 +48,9 @@ namespace HotellAdmin {
 			ResizeEnd += new EventHandler(FormHotellAdmin_ResizeEnd);
 
 			foreach (Control c in tableLayoutRoomsPanel.Controls) {
-				// Bruk denne når du lager drag & drop JORGON ---------------- !!!11!!
-			}
+                c.DragDrop += new DragEventHandler(labels_DragDrop);
+                c.DragOver += new DragEventHandler(labels_DragOver);
+            }
 
 			buttonFirstFloor.MouseDown += new MouseEventHandler(buttonFirstFloor_MouseDown);
 			buttonSecondFloor.MouseDown += new MouseEventHandler(buttonSecondFloor_MouseDown);
@@ -59,13 +58,13 @@ namespace HotellAdmin {
 
 			foreach (Control c in tableLayoutFloorButtons.Controls.OfType<Button>()) {
 				c.MouseDown += new MouseEventHandler(buttons_MouseDown);
-			}
+            }
 
 		}
 
 		private void OpenDatabase() {
 			//string db = @"server=46.9.246.190;database=hotell;port=24440;userid=admin;password=admin;";
-			DatabaseManager.Open("localhost", "24440", "hotell", "admin", "admin");
+			DatabaseManager.Open("46.9.246.190", "24440", "hotell", "admin", "admin");
 		}
 
 		private void GetRoomData() {
@@ -136,8 +135,10 @@ namespace HotellAdmin {
 			for (int i = 0; i < orderDataList.Count; i++) { 
                 string fornavn = orderDataList[i].firstName;
                 string etternavn = orderDataList[i].lastName;
-                string romType = orderDataList[i].roomType;
-                string bestilling = etternavn + ", " + fornavn + " - " + romType;
+                string fraDato = orderDataList[i].fraDato;     // Istedet for romtype skal vi ha fradato og tildato må også hente bestillingID
+                string tilDato = orderDataList[i].tilDato;
+                int bestillingID = orderDataList[i].bestillingID;
+                string bestilling = fornavn + " " + etternavn + " " + fraDato + " " + tilDato + " " + bestillingID;
                 listBoxOrders.Items.Add(bestilling);
              //   Console.WriteLine(bestilling);    bare en liten sjekker boi
             }
@@ -202,7 +203,43 @@ namespace HotellAdmin {
 			button.ForeColor = Color.White;
 
 			ShowRoomData(selectedFloor);
-		}
-	}
+        }
+        private void listBoxOrders_MouseDown(object sender, MouseEventArgs e)
+        {
+            int index = listBoxOrders.IndexFromPoint(e.X, e.Y);
+            if (index == -1) return;
+            string s = listBoxOrders.Items[index].ToString();
+            Console.WriteLine(s);
+            DragDropEffects dde1 = DoDragDrop(s, DragDropEffects.All);
+            if (dde1 == DragDropEffects.All)
+            {
+                listBoxOrders.Items.RemoveAt(index);
+            }
+        }
+        private void labels_DragDrop(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.StringFormat))
+            {
+                string stringFromListBox = (string)e.Data.GetData(DataFormats.StringFormat);
+                string[] stringBestilling = stringFromListBox.Split(' '); //Splitter opp stringen fra listeboksen
+                string fraDato = stringBestilling[2];   
+                string tilDato = stringBestilling[3];
+                string bestillingID = stringBestilling[4];
+
+                string stringFromLabel = (sender as Label).Text;
+                string[] stringLabel = stringFromLabel.Split('\n'); //Splitter opp de tre linjene stringFromLabel hadde
+                string romInfo = stringLabel[0];                    //Henter første linje fra stringFromLabel, dette er rom X
+                string[] stringLabel2 = romInfo.Split(' ');          //Splitter opp stringen romInfo
+                string romID = stringLabel2[1];                      //Henter det andre tegnet i stringen som er tallet
+                string sqlQuery = ("INSERT INTO booking (romID, bestillingID, fradato, tildato) VALUES (" + romID + ", " + bestillingID + ", '" + fraDato + "', '" + tilDato + "');");
+                DatabaseManager.Query(sqlQuery);
+            }
+        }
+        private void labels_DragOver(object sender, DragEventArgs e)
+        {
+            e.Effect = DragDropEffects.All;
+        }
+ 
+    }
 
 }

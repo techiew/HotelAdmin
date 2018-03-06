@@ -10,23 +10,25 @@ namespace HotellAdmin {
 
 	class OrderData {
 
-        MySqlConnection connection = new MySqlConnection(@"server=46.9.246.190;database=hotell;port=24440;userid=admin;password=admin;");
-
         public List<Order> ReadTable() {
-            connection.Open();
-            DataSet visData = new DataSet("bestilling");
-            MySqlDataAdapter hentData = new MySqlDataAdapter("SELECT fornavn, etternavn, romType, fraDato, tilDato FROM bestilling;", connection);
-            hentData.Fill(visData, "bestilling");
+
+            DataSet visData = DatabaseManager.Query("SELECT bestillingID, fornavn, etternavn, fradato, tildato FROM bestillinger;"); // Må adde "WHERE status = false" eller hva faen                                                                                            
             List<Order> OrderList = new List<Order>();
             string fornavn;
             string etternavn;
-            string romType;
+            int bestillingID;
+            DateTime fraDato;
+            DateTime tilDato;
 
-            foreach (DataRow rad in visData.Tables["bestilling"].Rows) {
+            foreach (DataRow rad in visData.Tables["result"].Rows) {
                 fornavn = (string)rad["fornavn"];
                 etternavn = (string)rad["etternavn"];
-                romType = (string)rad["romType"];
-                Order Order = new Order(fornavn, etternavn, romType);
+                bestillingID = (int)rad["bestillingID"];
+                fraDato = (DateTime)rad["fradato"];
+                tilDato = (DateTime)rad["tildato"];
+                var fraDatoString = fraDato.ToShortDateString();
+                var tilDatoString = tilDato.ToShortDateString();
+                Order Order = new Order(fornavn, etternavn, bestillingID, fraDatoString, tilDatoString);
                 OrderList.Add(Order);
             }
 

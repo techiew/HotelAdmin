@@ -11,11 +11,17 @@ namespace HotellAdmin {
 		public string firstName;
 		public string lastName;
 		public string roomType;
+        public int bestillingID;
+        public string fraDato;
+        public string tilDato;
 
-		public Order(string firstName, string lastName, string roomType) {
+
+        public Order(string firstName, string lastName, int bestillingID, string fraDato, string tilDato) {
 			this.firstName = firstName;
 			this.lastName = lastName;
-			this.roomType = roomType;
+            this.bestillingID = bestillingID;
+            this.fraDato = fraDato;
+            this.tilDato = tilDato;
 		}
 
 	}
