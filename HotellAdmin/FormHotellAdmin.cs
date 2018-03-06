@@ -226,9 +226,9 @@ namespace HotellAdmin
 			if (e.Data.GetDataPresent(DataFormats.StringFormat)) {
                 string listboxItemString = (string)e.Data.GetData(DataFormats.StringFormat);
                 string[] splitItemString = listboxItemString.Split(' '); //Splitter opp stringen fra listeboksen
-                string fromDate = splitItemString[2];   
-                string toDate = splitItemString[3];
-                string orderID = splitItemString[4];
+                string fromDate = splitItemString[3];   
+                string toDate = splitItemString[4];
+                string orderID = splitItemString[0];
 
                 string labelString = (sender as Label).Text;
                 string[] splitLabelString = labelString.Split('\n'); //Splitter opp de tre linjene stringFromLabel hadde
@@ -236,7 +236,7 @@ namespace HotellAdmin
                 string[] splitRoomInfo = roomInfo.Split(' ');          //Splitter opp stringen romInfo
                 string roomID = splitRoomInfo[1];                      //Henter det andre tegnet i stringen som er tallet
 
-				DatabaseManager.Query("INSERT INTO booking (romID, bestillingID, fradato, tildato) VALUES (" + roomID + ", " + orderID + ", " + fromDate + ", " + toDate + ");");
+				DatabaseManager.Query("INSERT INTO booking (romID, bestillingID, fradato, tildato) VALUES (" + roomID + ", " + orderID + ", '" + fromDate + "', '" + toDate + "');");
 			}
 
         }
