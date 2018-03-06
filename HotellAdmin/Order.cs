@@ -12,14 +12,14 @@ namespace HotellAdmin {
 		public string roomType;
         public string fromDate;
         public string toDate;
-		public bool status;
+		public string status;
 		public int phoneNumber;
 		public string firstName;
 		public string lastName;
 
 
 		public Order(int orderID, string roomType, string fromDate, string toDate,
-			bool status, int phoneNumber, string firstName, string lastName) {
+			string status, int phoneNumber, string firstName, string lastName) {
 
 			this.orderID = orderID;
 			this.roomType = roomType;

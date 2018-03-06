@@ -133,7 +133,7 @@ namespace HotellAdmin
 				string roomType = orderDataList[i].roomType;
 				string fromDate = orderDataList[i].fromDate;     // Istedet for romtype skal vi ha fradato og tildato må også hente bestillingID
 				string toDate = orderDataList[i].toDate;
-				bool status = orderDataList[i].status;
+				string status = orderDataList[i].status;
 				int phoneNumber = orderDataList[i].phoneNumber;
 				string firstName = orderDataList[i].firstName;
                 string lastName = orderDataList[i].lastName;
@@ -236,6 +236,7 @@ namespace HotellAdmin
                 string roomID = splitRoomInfo[1];                      //Henter det andre tegnet i stringen som er tallet
 
 				DatabaseManager.Query("INSERT INTO booking (romID, bestillingID, fradato, tildato) VALUES (" + roomID + ", " + orderID + ", '" + fromDate + "', '" + toDate + "');");
+                DatabaseManager.Query("UPDATE bestillinger SET tildelt = 'true' WHERE bestillingID =" + orderID + ";");
 			}
 
         }

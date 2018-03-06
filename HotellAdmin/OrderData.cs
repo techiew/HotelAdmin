@@ -11,7 +11,7 @@ namespace HotellAdmin {
 
         public List<Order> GetData() {
 
-            DataSet result = DatabaseManager.Query("SELECT bestillingID, romtype, fradato, tildato, status, tlf, fornavn, etternavn FROM bestillinger;"); // Må adde "WHERE status = false" eller hva faen                                                                                            
+            DataSet result = DatabaseManager.Query("SELECT bestillingID, romtype, fradato, tildato, tildelt, tlf, fornavn, etternavn FROM bestillinger WHERE tildelt = 'false';"); // Må adde "WHERE status = false" eller hva faen                                                                                            
             List<Order> OrderList = new List<Order>();
 
 			if (result == null) {
@@ -23,7 +23,7 @@ namespace HotellAdmin {
 			string roomType;
 			DateTime fromDate;
 			DateTime toDate;
-			bool status;
+			string status;
 			int phoneNumber;
 			string firstName;
 			string lastName;
@@ -33,7 +33,7 @@ namespace HotellAdmin {
 				roomType = (string)row["romtype"];
 				fromDate = (DateTime)row["fradato"];
 				toDate = (DateTime)row["tildato"];
-				status = ((string)row["status"] == "false") ? false : true;
+                status = (string)row["tildelt"]; // == "false") ? false : true;   marius bøll
 				phoneNumber = (int)row["tlf"];
 				firstName = (string)row["fornavn"];
 				lastName = (string)row["etternavn"];
