@@ -104,15 +104,14 @@ namespace HotellAdmin
 
 					buttonText =
 						"Rom " + (room.number + 1) + "\n" +
-						room.type + "\n";
-						//room.price + "\n"; // TODO Skal egentlig vise status på rommet
+						"Romtype: " + room.type + "\n" +
+						"Status: " + ((room.status) ? "Okkupert" : "Ledig"); 
 
 					buttonColor = (room.status) ? roomClosed : roomOpen;
 				} else {
 					buttonText =
 						"Rom " + (index + 1) + "\n" +
-						"Romtype\n" +
-						"Ledig/opptatt";
+						"Rommet er ikke definert i databasen";
 				}
 
 				roomLabelList[i].Text = buttonText;
