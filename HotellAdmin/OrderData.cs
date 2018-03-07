@@ -23,7 +23,7 @@ namespace HotellAdmin {
 			string roomType;
 			DateTime fromDate;
 			DateTime toDate;
-			string status;
+			string assigned;
 			int phoneNumber;
 			string firstName;
 			string lastName;
@@ -33,7 +33,7 @@ namespace HotellAdmin {
 				roomType = (string)row["romtype"];
 				fromDate = (DateTime)row["fradato"];
 				toDate = (DateTime)row["tildato"];
-                status = (string)row["tildelt"]; // == "false") ? false : true;   marius bøll
+                assigned = (string)row["tildelt"]; // == "false") ? false : true;   marius bøll
 				phoneNumber = (int)row["tlf"];
 				firstName = (string)row["fornavn"];
 				lastName = (string)row["etternavn"];
@@ -41,7 +41,7 @@ namespace HotellAdmin {
 				string fromDateString = fromDate.ToShortDateString();
                 string toDateString = toDate.ToShortDateString();
                 Order order = new Order(orderID, roomType, fromDateString, toDateString,
-					status, phoneNumber, firstName, lastName);
+					assigned, phoneNumber, firstName, lastName);
                 OrderList.Add(order);
             }
 

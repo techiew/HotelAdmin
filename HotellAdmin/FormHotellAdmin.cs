@@ -12,8 +12,7 @@ using System.Windows.Forms;
 // Både RoomData og OrderData kan bruke DatabaseManager.cs
 // BookingData.cs ???? - Hente data om booka rom, adde en funksjon som viser hvilke rom som er ledig og opptatt.
 
-namespace HotellAdmin
-{
+namespace HotellAdmin {
 
     public partial class FormHotellAdmin : Form {
 
@@ -22,10 +21,12 @@ namespace HotellAdmin
 		int selectedFloor = 1;
 		List<Room> roomDataList;
 		List<Order> orderDataList;
+		List<Booking> bookingDataList;
 		List<Label> roomLabelList = new List<Label>();
 
 		OrderData od = new OrderData();
 		RoomData rd = new RoomData();
+		BookingData bd = new BookingData();
 
 		Color roomOpen = Color.FromArgb(152, 251, 152); //50 205 50
 		Color roomClosed = Color.FromArgb(255, 99, 71); //176 23 31
@@ -41,6 +42,7 @@ namespace HotellAdmin
 			ShowRoomData(1);
 			GetOrderData();
 			ShowOrderData();
+			GetBookingData();
 			// ShowOrderSchema(); // Finn ut hvordan lasse vil ha det, manuelt eller automatisk laget skjema?
 
 			// Disse stopper ekstrem lag og CPU usage når vi resizer
@@ -102,13 +104,11 @@ namespace HotellAdmin
 
 				if (roomDataList.ElementAtOrDefault(index) != null) {
 					room = roomDataList[index];
-
 					buttonText =
 						"Rom " + (room.number + 1) + "\n" +
 						"Romtype: " + room.type + "\n" +
-						"Status: " + ((room.status) ? "Okkupert" : "Ledig"); 
-
-					buttonColor = (room.status) ? roomClosed : roomOpen;
+						"Status: " + ((room.assigned) ? "Okkupert" : "Ledig"); 
+					buttonColor = (room.assigned) ? roomClosed : roomOpen;
 				} else {
 					buttonText =
 						"Rom " + (index + 1) + "\n" +
@@ -148,6 +148,17 @@ namespace HotellAdmin
             }
 
         }
+
+		public void GetBookingData() {
+			bookingDataList = bd.GetData();
+			//Console.WriteLine(BookingData.IsRoomOccupiedForPeriod(3, "2018-08-26", "2018-08-28"));
+			List<Room> availableRooms = BookingData.GetAvailableRoomsForPeriod("2018-08-22", "2018-08-25");
+			Console.WriteLine("Gyldige rom:");
+			for(int i = 0; i < availableRooms.Count; i++) {
+				Console.WriteLine(availableRooms[i].number);
+			}
+
+		}
 
 		private void MakeNewOrder() {
 			// TODO
@@ -224,6 +235,7 @@ namespace HotellAdmin
             }
 
         }
+
         private void labels_DragDrop(object sender, DragEventArgs e) {
 
 			// sjekk denne - https://stackoverflow.com/questions/3240603/c-sharp-drag-and-drop-show-the-dragged-item-while-dragging

@@ -10,16 +10,12 @@ namespace HotellAdmin {
 
 		public int number;
 		public string type;
-		public bool status;
+		public bool assigned;
 
-		public Room(int number, string type) {
+		public Room(int number, string type, bool assigned) {
 			this.number = number;
 			this.type = type;
-			status = false;
-		}
-
-		public void SetStatus(bool status) {
-			this.status = status;
+			this.assigned = false;
 		}
 
 	}
