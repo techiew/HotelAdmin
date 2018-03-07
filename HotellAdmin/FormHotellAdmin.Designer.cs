@@ -419,12 +419,13 @@
 			this.tableLayoutSidePanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
 			this.tableLayoutSidePanel.Controls.Add(this.label1, 0, 0);
 			this.tableLayoutSidePanel.Controls.Add(this.listBoxOrders, 0, 1);
-			this.tableLayoutSidePanel.Location = new System.Drawing.Point(647, 3);
+			this.tableLayoutSidePanel.Location = new System.Drawing.Point(644, 0);
+			this.tableLayoutSidePanel.Margin = new System.Windows.Forms.Padding(0);
 			this.tableLayoutSidePanel.Name = "tableLayoutSidePanel";
 			this.tableLayoutSidePanel.RowCount = 2;
 			this.tableLayoutSidePanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 10F));
 			this.tableLayoutSidePanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 90F));
-			this.tableLayoutSidePanel.Size = new System.Drawing.Size(271, 552);
+			this.tableLayoutSidePanel.Size = new System.Drawing.Size(277, 558);
 			this.tableLayoutSidePanel.TabIndex = 2;
 			// 
 			// label1
@@ -434,11 +435,11 @@
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.label1.BackColor = System.Drawing.Color.White;
 			this.label1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-			this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.label1.Location = new System.Drawing.Point(0, 0);
 			this.label1.Margin = new System.Windows.Forms.Padding(0);
 			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(271, 55);
+			this.label1.Size = new System.Drawing.Size(277, 55);
 			this.label1.TabIndex = 1;
 			this.label1.Text = "Bestillinger";
 			this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -454,10 +455,10 @@
 			this.listBoxOrders.FormattingEnabled = true;
 			this.listBoxOrders.HorizontalScrollbar = true;
 			this.listBoxOrders.ItemHeight = 20;
-			this.listBoxOrders.Location = new System.Drawing.Point(0, 60);
-			this.listBoxOrders.Margin = new System.Windows.Forms.Padding(0, 5, 0, 0);
+			this.listBoxOrders.Location = new System.Drawing.Point(0, 55);
+			this.listBoxOrders.Margin = new System.Windows.Forms.Padding(0);
 			this.listBoxOrders.Name = "listBoxOrders";
-			this.listBoxOrders.Size = new System.Drawing.Size(271, 482);
+			this.listBoxOrders.Size = new System.Drawing.Size(277, 502);
 			this.listBoxOrders.TabIndex = 2;
 			this.listBoxOrders.TabStop = false;
 			this.listBoxOrders.MouseDown += new System.Windows.Forms.MouseEventHandler(this.listBoxOrders_MouseDown);

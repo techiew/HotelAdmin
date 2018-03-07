@@ -27,8 +27,8 @@ namespace HotellAdmin
 		OrderData od = new OrderData();
 		RoomData rd = new RoomData();
 
-		Color roomOpen = Color.FromArgb(50, 205, 50);
-		Color roomClosed = Color.FromArgb(176, 23, 31);
+		Color roomOpen = Color.FromArgb(152, 251, 152); //50 205 50
+		Color roomClosed = Color.FromArgb(255, 99, 71); //176 23 31
 
 		public FormHotellAdmin() {
 			InitializeComponent();
@@ -56,6 +56,7 @@ namespace HotellAdmin
 			buttonSecondFloor.MouseDown += new MouseEventHandler(buttonSecondFloor_MouseDown);
 			buttonThirdFloor.MouseDown += new MouseEventHandler(buttonThirdFloor_MouseDown);
 
+			//La denne loopen ligge under de andre, tror det gjør slik at denne eventen blir triggera sist, og det er viktig
 			foreach (Control c in tableLayoutFloorButtons.Controls.OfType<Button>()) {
 				c.MouseDown += new MouseEventHandler(buttons_MouseDown);
             }
@@ -127,7 +128,11 @@ namespace HotellAdmin
         }
 
 		private void ShowOrderData() {
-			// IKKE BRUK NORSK !!!!!111 -------------------------------- TRIGGRD ... CONSISTENCY!!!
+
+			if (orderDataList == null || orderDataList.Count == 0) {
+				return;
+			}
+
 			for (int i = 0; i < orderDataList.Count; i++) {
 				int orderID = orderDataList[i].orderID;
 				string roomType = orderDataList[i].roomType;
@@ -222,6 +227,7 @@ namespace HotellAdmin
         }
         private void labels_DragDrop(object sender, DragEventArgs e) {
 
+			// sjekk denne - https://stackoverflow.com/questions/3240603/c-sharp-drag-and-drop-show-the-dragged-item-while-dragging
 			if (e.Data.GetDataPresent(DataFormats.StringFormat)) {
                 string listboxItemString = (string)e.Data.GetData(DataFormats.StringFormat);
                 string[] splitItemString = listboxItemString.Split(' '); //Splitter opp stringen fra listeboksen
