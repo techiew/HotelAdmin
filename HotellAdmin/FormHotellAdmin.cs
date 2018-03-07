@@ -145,7 +145,6 @@ namespace HotellAdmin
 
 				string order = orderID + " " + firstName + " " + lastName + " " + fromDate + " " + toDate;
                 listBoxOrders.Items.Add(order);
-             //   Console.WriteLine(bestilling);    bare en liten sjekker boi
             }
 
         }
