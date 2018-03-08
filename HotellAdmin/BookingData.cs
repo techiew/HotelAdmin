@@ -32,7 +32,6 @@ namespace HotellAdmin {
 				fromDate = ((DateTime)row["fradato"]).ToShortDateString();
 				toDate = ((DateTime)row["tildato"]).ToShortDateString();
 				bookings.Add(new Booking(bookingID, roomID, orderID, fromDate, toDate));
-				Console.WriteLine(bookingID + ", " + roomID + ", " + orderID + ", " + fromDate + ", " + toDate);
 			}
 
 			return bookings;
@@ -55,7 +54,7 @@ namespace HotellAdmin {
 		public static List<Room> GetAvailableRoomsForPeriod(string fromDate, string toDate) {
 			DataSet result = DatabaseManager.Query
 				(
-				"SELECT romID FROM rom WHERE romID NOT IN (SELECT romID FROM booking WHERE tildato >= CURDATE() AND (fradato >= '" + toDate + "') AND ('" + fromDate + "' >= tildato));"
+				"SELECT romID FROM rom WHERE romID NOT IN (SELECT romID FROM booking WHERE tildato >= CURDATE() AND (fradato <= '" + toDate + "') AND ('" + fromDate + "' <= tildato));"
 				);
 
 			if (result == null) {

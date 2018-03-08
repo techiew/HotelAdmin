@@ -98,7 +98,7 @@ namespace HotellAdmin {
 			Room room;
 
 			for (int i = 0;  i < roomLabelList.Count; i++) {
-				Console.WriteLine(index + " | " + roomDataList.ElementAtOrDefault(index));
+				//Console.WriteLine(index + " | " + roomDataList.ElementAtOrDefault(index));
 				Color buttonColor = Color.LightGray;
 				string buttonText = "null";
 
@@ -143,7 +143,7 @@ namespace HotellAdmin {
 				string firstName = orderDataList[i].firstName;
                 string lastName = orderDataList[i].lastName;
 
-				string order = orderID + " " + firstName + " " + lastName + " " + fromDate + " " + toDate;
+				string order = lastName + ", " + firstName + " : " + fromDate + " - " + toDate;
                 listBoxOrders.Items.Add(order);
             }
 
@@ -152,11 +152,11 @@ namespace HotellAdmin {
 		public void GetBookingData() {
 			bookingDataList = bd.GetData();
 			//Console.WriteLine(BookingData.IsRoomOccupiedForPeriod(3, "2018-08-26", "2018-08-28"));
-			List<Room> availableRooms = BookingData.GetAvailableRoomsForPeriod("2018-08-22", "2018-08-25");
-			Console.WriteLine("Gyldige rom:");
-			for(int i = 0; i < availableRooms.Count; i++) {
-				Console.WriteLine(availableRooms[i].number);
-			}
+			//List<Room> availableRooms = BookingData.GetAvailableRoomsForPeriod("2018-08-22", "2018-08-25");
+			//Console.WriteLine("Gyldige rom:");
+			//for(int i = 0; i < availableRooms.Count; i++) {
+			//	Console.WriteLine(availableRooms[i].number);
+			//}
 
 		}
 
@@ -226,11 +226,34 @@ namespace HotellAdmin {
 
             if (index == -1) return;
 
-            string s = listBoxOrders.Items[index].ToString();
-            Console.WriteLine(s);
-            DragDropEffects dde1 = DoDragDrop(s, DragDropEffects.All);
+            string listBoxItemString = listBoxOrders.Items[index].ToString();
+			string[] listBoxSplit = listBoxItemString.Split(':');
+			string partOne = listBoxSplit[1].Split('-')[0].Trim();
+			string partTwo = listBoxSplit[1].Split('-')[1].Trim();
 
-            if (dde1 == DragDropEffects.All) {
+			string[] fromDateSplit = partOne.Split('.');
+			string[] toDateSplit = partTwo.Split('.');
+
+			string fromDateString = fromDateSplit[2] + "-" + fromDateSplit[1] + "-" + fromDateSplit[0];
+			string toDateString = toDateSplit[2] + "-" + toDateSplit[1] + "-" + toDateSplit[0];
+
+			List<Room> availableRooms = BookingData.GetAvailableRoomsForPeriod(fromDateString, toDateString);
+
+			for (int i = 0; i < roomDataList.Count; i++) {
+				bool isAssigned = true;
+				for(int j = 0; j < availableRooms.Count; j++) {
+					if(roomDataList[i].number == availableRooms[j].number) {
+						isAssigned = false;
+					} 
+				}
+				roomDataList[i].assigned = isAssigned;
+			}
+
+			ShowRoomData(selectedFloor);
+
+			DragDropEffects dde = DoDragDrop(listBoxItemString, DragDropEffects.All);
+
+            if (dde == DragDropEffects.All) {
                 listBoxOrders.Items.RemoveAt(index);
             }
 
