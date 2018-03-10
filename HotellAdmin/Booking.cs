@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace HotellAdmin {
+
 	class Booking {
 		public int bookingID;
 		public int roomID;
@@ -21,4 +22,5 @@ namespace HotellAdmin {
 		}
 
 	}
+
 }

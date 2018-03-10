@@ -149,7 +149,7 @@ namespace HotellAdmin {
 
         }
 
-		public void GetBookingData() {
+		private void GetBookingData() {
 			bookingDataList = bd.GetData();
 			//Console.WriteLine(BookingData.IsRoomOccupiedForPeriod(3, "2018-08-26", "2018-08-28"));
 			//List<Room> availableRooms = BookingData.GetAvailableRoomsForPeriod("2018-08-22", "2018-08-25");
