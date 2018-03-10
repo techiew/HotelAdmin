@@ -37,11 +37,9 @@ namespace HotellAdmin {
 				phoneNumber = (int)row["tlf"];
 				firstName = (string)row["fornavn"];
 				lastName = (string)row["etternavn"];
-
-				string fromDateString = fromDate.ToShortDateString();
+                string fromDateString = fromDate.ToShortDateString();
                 string toDateString = toDate.ToShortDateString();
-                Order order = new Order(orderID, roomType, fromDateString, toDateString,
-					assigned, phoneNumber, firstName, lastName);
+                Order order = new Order(orderID, roomType, fromDateString, toDateString, assigned, phoneNumber, firstName, lastName);
                 OrderList.Add(order);
             }
 

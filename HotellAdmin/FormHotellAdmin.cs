@@ -19,6 +19,11 @@ namespace HotellAdmin {
 		int floors = 4;
 		int roomsPerFloor = 11; // sett til # av labels i rutene?
 		int selectedFloor = 1;
+        string flippedFromDate;
+        string flippedToDate;
+        string foreName;
+        string afterName;
+        int orderID;
 		List<Room> roomDataList;
 		List<Order> orderDataList;
 		List<Booking> bookingDataList;
@@ -142,8 +147,7 @@ namespace HotellAdmin {
 				int phoneNumber = orderDataList[i].phoneNumber;
 				string firstName = orderDataList[i].firstName;
                 string lastName = orderDataList[i].lastName;
-
-				string order = lastName + ", " + firstName + " : " + fromDate + " - " + toDate;
+                string order = lastName + "," + firstName + " : " + fromDate + " - " + toDate + " : " + orderID;
                 listBoxOrders.Items.Add(order);
             }
 
@@ -228,16 +232,26 @@ namespace HotellAdmin {
 
             string listBoxItemString = listBoxOrders.Items[index].ToString();
 			string[] listBoxSplit = listBoxItemString.Split(':');
+            string foreName = listBoxSplit[0].Split(',')[0].Trim();
+            string afterName = listBoxSplit[0].Split(',')[1].Trim(); //greit å splitte opp navna også   :     ^       )    
 			string partOne = listBoxSplit[1].Split('-')[0].Trim();
 			string partTwo = listBoxSplit[1].Split('-')[1].Trim();
+            string orderIDString = listBoxSplit[2].Trim();
+            orderID = Int32.Parse(orderIDString);
 
-			string[] fromDateSplit = partOne.Split('.');
+
+            string[] fromDateSplit = partOne.Split('.');
 			string[] toDateSplit = partTwo.Split('.');
 
 			string fromDateString = fromDateSplit[2] + "-" + fromDateSplit[1] + "-" + fromDateSplit[0];
 			string toDateString = toDateSplit[2] + "-" + toDateSplit[1] + "-" + toDateSplit[0];
-
-			List<Room> availableRooms = BookingData.GetAvailableRoomsForPeriod(fromDateString, toDateString);
+            flippedFromDate = fromDateString;
+            flippedToDate = toDateString; 
+            Console.WriteLine(toDateString + "test");
+            Console.WriteLine(partOne);
+            Console.WriteLine(partTwo);
+            Console.WriteLine(flippedToDate + "dato");
+            List<Room> availableRooms = BookingData.GetAvailableRoomsForPeriod(fromDateString, toDateString);
 
 			for (int i = 0; i < roomDataList.Count; i++) {
 				bool isAssigned = true;
@@ -261,23 +275,27 @@ namespace HotellAdmin {
 
         private void labels_DragDrop(object sender, DragEventArgs e) {
 
-			// sjekk denne - https://stackoverflow.com/questions/3240603/c-sharp-drag-and-drop-show-the-dragged-item-while-dragging
-			if (e.Data.GetDataPresent(DataFormats.StringFormat)) {
-                string listboxItemString = (string)e.Data.GetData(DataFormats.StringFormat);
-                string[] splitItemString = listboxItemString.Split(' '); //Splitter opp stringen fra listeboksen
-                string fromDate = splitItemString[3];   
-                string toDate = splitItemString[4];
-                string orderID = splitItemString[0];
-
+            // sjekk denne - https://stackoverflow.com/questions/3240603/c-sharp-drag-and-drop-show-the-dragged-item-while-dragging    nei takk
+            if (e.Data.GetDataPresent(DataFormats.StringFormat)) {
                 string labelString = (sender as Label).Text;
                 string[] splitLabelString = labelString.Split('\n'); //Splitter opp de tre linjene stringFromLabel hadde
                 string roomInfo = splitLabelString[0];                    //Henter første linje fra stringFromLabel, dette er rom X
                 string[] splitRoomInfo = roomInfo.Split(' ');          //Splitter opp stringen romInfo
-                string roomID = splitRoomInfo[1];                      //Henter det andre tegnet i stringen som er tallet
-
-				DatabaseManager.Query("INSERT INTO booking (romID, bestillingID, fradato, tildato) VALUES (" + roomID + ", " + orderID + ", '" + fromDate + "', '" + toDate + "');");
-                DatabaseManager.Query("UPDATE bestillinger SET tildelt = 'true' WHERE bestillingID =" + orderID + ";");
-			}
+                string roomIDString = splitRoomInfo[1];                      //Henter det andre tegnet i stringen som er tallet
+                int roomID = Int32.Parse(roomIDString) - 1;
+                Console.WriteLine(roomID);
+                Console.WriteLine(roomDataList[roomID].assigned  + "Dette er roomdata is assigned");
+                if (roomDataList[roomID].assigned == false)
+                {
+                    string query = ("INSERT INTO booking(romID, bestillingID, fradato, tildato) VALUES(" + roomID + ", " + orderID + ", '" + flippedFromDate + "', '" + flippedToDate + "');");
+                    DatabaseManager.Query(query);
+                    DatabaseManager.Query("UPDATE bestillinger SET tildelt = 'true' WHERE bestillingID =" + orderID + ";");
+                }
+                else
+                {
+                    Console.WriteLine("TEst");
+                }
+            }
 
         }
 
