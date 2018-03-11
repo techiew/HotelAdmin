@@ -23,7 +23,7 @@ namespace HotellAdmin {
 			string type;
 
 			foreach(DataRow row in result.Tables["result"].Rows) {
-				number = (int)row["romID"] - 1;
+				number = (int)row["romID"];
 				type = (string)row["romtype"];
 				rooms.Add(new Room(number, type, false, false));
 			}

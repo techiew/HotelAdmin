@@ -135,7 +135,7 @@ namespace HotellAdmin {
 
                     }
 					buttonText =
-						"Rom " + room.number + "\n" +
+						"Rom " + (room.number + 1) + "\n" +
 						"Romtype: " + CultureInfo.CurrentCulture.TextInfo.ToTitleCase(room.type.ToLower()) + "\n" +
 						"Status: " + ((isRoomAvailable) ? "Ledig" : roomStatus); 
 					buttonColor = (isRoomAvailable) ? roomOpen : roomClosed;
@@ -311,9 +311,11 @@ namespace HotellAdmin {
                 bool isWrongRoomType = true;
 
 				for(int j = 0; j < availableRooms.Count; j++) {
+
 					if(roomDataList[i].number == availableRooms[j].number) {
 						isAssigned = false;
 					} 
+
 				}
 
                 for (int j = 0; j < availableRooms.Count; j++) {
@@ -348,7 +350,7 @@ namespace HotellAdmin {
                 string roomInfo = splitLabelString[0];                    //Henter første linje fra stringFromLabel, dette er rom X
                 string[] splitRoomInfo = roomInfo.Split(' ');          //Splitter opp stringen romInfo
                 string roomIDString = splitRoomInfo[1];                      //Henter det andre tegnet i stringen som er tallet
-                int roomID = Int32.Parse(roomIDString);
+                int roomID = Int32.Parse(roomIDString) - 1;
 
 				if (roomDataList.ElementAtOrDefault(roomID) == null) return;
 
@@ -384,6 +386,11 @@ namespace HotellAdmin {
         }
 
 		private void currentPeriod_Click(object sender, EventArgs e) {
+
+			for (int i = 0; i < roomDataList.Count; i++) {
+				roomDataList[i].wrongRoomType = false;
+			}
+
 			ShowRoomsForToday();
 			currentPeriod.Text = "Viser oversikt for: i dag";
 		}
