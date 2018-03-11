@@ -67,7 +67,7 @@ namespace HotellAdmin {
 
 			foreach (DataRow row in result.Tables["result"].Rows) {
 				roomID = (int)row["romID"];
-				availableRooms.Add(new Room(roomID, "Ukjent", false));
+				availableRooms.Add(new Room(roomID, "Ukjent", false, false));
 			}
 
 			return availableRooms;
@@ -89,7 +89,7 @@ namespace HotellAdmin {
 
 			foreach (DataRow row in result.Tables["result"].Rows) {
 				roomID = (int)row["romID"];
-				availableRooms.Add(new Room(roomID, "Ukjent", false));
+				availableRooms.Add(new Room(roomID, "Ukjent", false, false));
 			}
 
 			return availableRooms;

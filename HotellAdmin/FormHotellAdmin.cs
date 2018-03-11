@@ -5,6 +5,8 @@ using System.Drawing;
 using System.Globalization;
 using System.Linq;
 using System.Windows.Forms;
+using System.Configuration;
+
 
 // FormHotellAdmin.cs - Håndtere visning av data
 // OrderData.cs - Håndtere henting av bestillingsdata
@@ -15,7 +17,6 @@ using System.Windows.Forms;
 namespace HotellAdmin {
 
     public partial class FormHotellAdmin : Form {
-
 		int floors = 4;
 		int roomsPerFloor = 11; // sett til # av labels i rutene?
 		int selectedFloor = 1;
@@ -38,11 +39,13 @@ namespace HotellAdmin {
 
 		public FormHotellAdmin() {
 			InitializeComponent();
-		}
+        }
 
 		private void FormHotellAdmin_Load(object sender, EventArgs e) {
-			// RequestLogin(); // Logge inn for å bruke programmet?
-			OpenDatabase();
+            // RequestLogin(); // Logge inn for å bruke programmet?
+            this.Size = Properties.Settings.Default.FormSize;
+            colorBlindMode.Checked = Properties.Settings.Default.ColorBlind;
+            OpenDatabase();
 			GetRoomData();
 			ShowRoomData(1);
 			GetOrderData();
@@ -64,8 +67,10 @@ namespace HotellAdmin {
 			buttonSecondFloor.MouseDown += new MouseEventHandler(buttonSecondFloor_MouseDown);
 			buttonThirdFloor.MouseDown += new MouseEventHandler(buttonThirdFloor_MouseDown);
 
-			//La denne loopen ligge under de andre, tror det gjør slik at denne eventen blir triggera sist, og det er viktig
-			foreach (Control c in tableLayoutFloorButtons.Controls.OfType<Button>()) {
+
+
+            //La denne loopen ligge under de andre, tror det gjør slik at denne eventen blir triggera sist, og det er viktig
+            foreach (Control c in tableLayoutFloorButtons.Controls.OfType<Button>()) {
 				c.MouseDown += new MouseEventHandler(buttons_MouseDown);
             }
 
@@ -73,7 +78,9 @@ namespace HotellAdmin {
 
 		}
 
-		private void OpenDatabase() {
+
+
+        private void OpenDatabase() {
 			//string db = @"server=46.9.246.190;database=hotell;port=24440;userid=admin;password=admin;";
 			DatabaseManager.Open("46.9.246.190", "24440", "hotell", "admin", "admin");
 		}
@@ -112,11 +119,26 @@ namespace HotellAdmin {
 
 				if (roomDataList.ElementAtOrDefault(index) != null) {
 					room = roomDataList[index];
+                    bool isRoomAvailable = true;
+                    string roomStatus = null;
+                    if (room.wrongRoomType)
+                    {
+                        isRoomAvailable = false;
+                        roomStatus = "Feil romtype";
+                    }
+                    else
+                    {
+                        if (room.assigned)
+                        {
+                            isRoomAvailable = false;
+                            roomStatus = "Okkupert";
+                        }
+                    }
 					buttonText =
 						"Rom " + (room.number + 1) + "\n" +
 						"Romtype: " + CultureInfo.CurrentCulture.TextInfo.ToTitleCase(room.type.ToLower()) + "\n" +
-						"Status: " + ((room.assigned) ? "Okkupert" : "Ledig"); 
-					buttonColor = (room.assigned) ? roomClosed : roomOpen;
+						"Status: " + ((isRoomAvailable) ? "Ledig" : roomStatus); 
+					buttonColor = (isRoomAvailable) ? roomOpen : roomClosed;
 				} else {
 					buttonText =
 						"Rom " + (index + 1) + "\n" +
@@ -152,7 +174,7 @@ namespace HotellAdmin {
 				int phoneNumber = orderDataList[i].phoneNumber;
 				string firstName = orderDataList[i].firstName;
                 string lastName = orderDataList[i].lastName;
-                string order = lastName + "," + firstName + " : " + fromDate + " - " + toDate + " : " + orderID;
+                string order = lastName + "," + firstName + " : " + fromDate + " - " + toDate + " : " + roomType + " : " + orderID;
                 listBoxOrders.Items.Add(order);
             }
 
@@ -266,7 +288,8 @@ namespace HotellAdmin {
             string afterName = listBoxSplit[0].Split(',')[1].Trim(); //greit å splitte opp navna også   :     ^       )    
 			string partOne = listBoxSplit[1].Split('-')[0].Trim();
 			string partTwo = listBoxSplit[1].Split('-')[1].Trim();
-            string orderIDString = listBoxSplit[2].Trim();
+            string roomType = listBoxSplit[2].Trim().ToLower();
+            string orderIDString = listBoxSplit[3].Trim();
             orderID = Int32.Parse(orderIDString);
 
 
@@ -282,12 +305,21 @@ namespace HotellAdmin {
 
 			for (int i = 0; i < roomDataList.Count; i++) {
 				bool isAssigned = true;
+                bool isWrongRoomType = true;
 				for(int j = 0; j < availableRooms.Count; j++) {
 					if(roomDataList[i].number == availableRooms[j].number) {
 						isAssigned = false;
 					} 
 				}
-				roomDataList[i].assigned = isAssigned;
+                for (int j = 0; j < availableRooms.Count; j++)
+                {
+                    if (roomDataList[i].type == roomType)
+                    {
+                        isWrongRoomType = false;
+                    }
+                }
+                roomDataList[i].assigned = isAssigned;
+                roomDataList[i].wrongRoomType = isWrongRoomType;
 			}
 
 			ShowRoomData(selectedFloor);
@@ -358,7 +390,9 @@ namespace HotellAdmin {
             string afterName = dropInLastname.Text;
             string query = ("INSERT INTO bestillinger (romtype, fradato, tildato, tlf, fornavn, etternavn) VALUES ('" + roomType + "', '" + fromDate + "', '" + toDate + "', " + tlf + ", '" + foreName + "', '" + afterName + "');");
             DatabaseManager.Query(query);
-			GetOrderData();
+            DropInMessage.Text = "Bestillingen har nå blitt registrert!";
+            DropInMessage.Visible = true;
+            GetOrderData();
 			ShowOrderData();
         }
 
@@ -370,6 +404,29 @@ namespace HotellAdmin {
 			dropInPhoneNumber.Text = "";
 		}
 
-	}
+        private void colorBlindMode_CheckedChanged(object sender, EventArgs e)
+        {
+            if (colorBlindMode.Checked)
+            {
+               roomOpen = Color.FromArgb(0, 174, 239); //Blåfarge
+               roomClosed = Color.FromArgb(255, 99, 71);
+                Properties.Settings.Default.ColorBlind = true;
+            }
+            if (!colorBlindMode.Checked)
+            {
+               roomOpen = Color.FromArgb(152, 251, 152); //50 205 50
+               roomClosed = Color.FromArgb(255, 99, 71); //176 23 31
+                Properties.Settings.Default.ColorBlind = false;
+            }
+            ShowRoomData(1);
+        }
+
+        private void FormHotellAdmin_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            Properties.Settings.Default.FormSize = this.Size;
+            Properties.Settings.Default.Location = this.Location;
+            Properties.Settings.Default.Save();
+        }
+    }
 
 }

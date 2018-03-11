@@ -11,11 +11,13 @@ namespace HotellAdmin {
 		public int number;
 		public string type;
 		public bool assigned;
+        public bool wrongRoomType;
 
-		public Room(int number, string type, bool assigned) {
+		public Room(int number, string type, bool assigned, bool roomType) {
 			this.number = number;
 			this.type = type;
 			this.assigned = false;
+            this.wrongRoomType = false;
 		}
 
 	}
