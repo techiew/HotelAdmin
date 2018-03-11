@@ -364,10 +364,15 @@ namespace HotellAdmin {
                         roomDataList[roomID].assigned = true;
                         ShowRoomData(selectedFloor);
                     }
-				} else {
+                    else
+                    {
+                        listBoxOrders.Items.Add(listBoxItems);
+                        Console.WriteLine(listBoxItems);
+                    }
+                }
+                else {
                     listBoxOrders.Items.Add(listBoxItems);
-                    Console.WriteLine(roomID);
-                    Console.WriteLine(roomDataList[roomID].number);
+                    Console.WriteLine(listBoxItems);
                 }
 
             }

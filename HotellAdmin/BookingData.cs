@@ -27,7 +27,7 @@ namespace HotellAdmin {
 
 			foreach (DataRow row in result.Tables["result"].Rows) {
 				bookingID = (int)row["bookingID"];
-				roomID = (int)row["romID"];
+				roomID = (int)row["romID"] - 1;
 				orderID = (int)row["bestillingID"];
 				fromDate = ((DateTime)row["fradato"]).ToShortDateString();
 				toDate = ((DateTime)row["tildato"]).ToShortDateString();
