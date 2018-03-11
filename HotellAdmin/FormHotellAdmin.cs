@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
+using System.Globalization;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -111,7 +112,7 @@ namespace HotellAdmin {
 					room = roomDataList[index];
 					buttonText =
 						"Rom " + (room.number + 1) + "\n" +
-						"Romtype: " + room.type + "\n" +
+						"Romtype: " + CultureInfo.CurrentCulture.TextInfo.ToTitleCase(room.type.ToLower()) + "\n" +
 						"Status: " + ((room.assigned) ? "Okkupert" : "Ledig"); 
 					buttonColor = (room.assigned) ? roomClosed : roomOpen;
 				} else {
@@ -162,6 +163,22 @@ namespace HotellAdmin {
 			//	Console.WriteLine(availableRooms[i].number);
 			//}
 
+		}
+
+		private void ShowRoomsForToday() {
+			List<Room> availableRooms = BookingData.GetAvailableRoomsForToday();
+
+			for (int i = 0; i < roomDataList.Count; i++) {
+				bool isAssigned = true;
+				for (int j = 0; j < availableRooms.Count; j++) {
+					if (roomDataList[i].number == availableRooms[j].number) {
+						isAssigned = false;
+					}
+				}
+				roomDataList[i].assigned = isAssigned;
+			}
+
+			ShowRoomData(selectedFloor);
 		}
 
 		private void MakeNewOrder() {
@@ -252,6 +269,7 @@ namespace HotellAdmin {
             Console.WriteLine(partTwo);
             Console.WriteLine(flippedToDate + "dato");
             List<Room> availableRooms = BookingData.GetAvailableRoomsForPeriod(fromDateString, toDateString);
+			currentPeriod.Text = "Viser oversikt for: " + partOne + " - " + partTwo;
 
 			for (int i = 0; i < roomDataList.Count; i++) {
 				bool isAssigned = true;
@@ -268,33 +286,38 @@ namespace HotellAdmin {
 			DragDropEffects dde = DoDragDrop(listBoxItemString, DragDropEffects.All);
 
             if (dde == DragDropEffects.All) {
-                listBoxOrders.Items.RemoveAt(index);
+                listBoxOrders.Items.RemoveAt(index); // må fikse slik at listeboks itemet bare blir fjerna hvis endringene faktisk skjer, er feks bugga hvis vi drar den inn i en tom romlabel
             }
 
         }
 
         private void labels_DragDrop(object sender, DragEventArgs e) {
 
-            // sjekk denne - https://stackoverflow.com/questions/3240603/c-sharp-drag-and-drop-show-the-dragged-item-while-dragging    nei takk
-            if (e.Data.GetDataPresent(DataFormats.StringFormat)) {
+			// sjekk denne - https://stackoverflow.com/questions/3240603/c-sharp-drag-and-drop-show-the-dragged-item-while-dragging    nei takk
+			// jo, det skal vi mekke
+			if (e.Data.GetDataPresent(DataFormats.StringFormat)) {
                 string labelString = (sender as Label).Text;
                 string[] splitLabelString = labelString.Split('\n'); //Splitter opp de tre linjene stringFromLabel hadde
                 string roomInfo = splitLabelString[0];                    //Henter første linje fra stringFromLabel, dette er rom X
                 string[] splitRoomInfo = roomInfo.Split(' ');          //Splitter opp stringen romInfo
                 string roomIDString = splitRoomInfo[1];                      //Henter det andre tegnet i stringen som er tallet
                 int roomID = Int32.Parse(roomIDString) - 1;
+
+				if (roomDataList.ElementAtOrDefault(roomID) == null) return;
+
                 Console.WriteLine(roomID);
                 Console.WriteLine(roomDataList[roomID].assigned  + "Dette er roomdata is assigned");
-                if (roomDataList[roomID].assigned == false)
-                {
+
+                if (roomDataList[roomID].assigned == false) {
                     string query = ("INSERT INTO booking(romID, bestillingID, fradato, tildato) VALUES(" + roomID + ", " + orderID + ", '" + flippedFromDate + "', '" + flippedToDate + "');");
                     DatabaseManager.Query(query);
                     DatabaseManager.Query("UPDATE bestillinger SET tildelt = 'true' WHERE bestillingID =" + orderID + ";");
-                }
-                else
-                {
+					roomDataList[roomID].assigned = true;
+					ShowRoomData(selectedFloor);
+				} else {
                     Console.WriteLine("TEst");
                 }
+
             }
 
         }
@@ -302,7 +325,11 @@ namespace HotellAdmin {
         private void labels_DragOver(object sender, DragEventArgs e) {
             e.Effect = DragDropEffects.All;
         }
- 
-    }
+
+		private void currentPeriod_Click(object sender, EventArgs e) {
+			ShowRoomsForToday();
+		}
+
+	}
 
 }

@@ -73,6 +73,28 @@ namespace HotellAdmin {
 			return availableRooms;
 		}
 
+		public static List<Room> GetAvailableRoomsForToday() {
+			DataSet result = DatabaseManager.Query
+				(
+				"SELECT romID FROM rom WHERE romID NOT IN (SELECT romID FROM booking WHERE tildato >= CURDATE() AND (fradato <= CURDATE()) AND (CURDATE() <= tildato));"
+				);
+
+			if (result == null) {
+				Console.WriteLine("BookingData.GetAvailableRoomsForPeriod: Datasettet er tomt");
+				return new List<Room>();
+			}
+
+			List<Room> availableRooms = new List<Room>();
+			int roomID;
+
+			foreach (DataRow row in result.Tables["result"].Rows) {
+				roomID = (int)row["romID"];
+				availableRooms.Add(new Room(roomID, "Ukjent", false));
+			}
+
+			return availableRooms;
+		}
+
 	}
 
 }

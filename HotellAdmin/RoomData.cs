@@ -11,7 +11,7 @@ namespace HotellAdmin {
 
 		public List<Room> GetData() {
 			
-			DataSet result = DatabaseManager.Query("SELECT * FROM rom;");
+			DataSet result = DatabaseManager.Query("SELECT * FROM rom ORDER BY romID ASC;");
 
 			if(result == null) {
 				Console.WriteLine("RoomData.GetData: Datasettet er tomt");
