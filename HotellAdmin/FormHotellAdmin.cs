@@ -49,10 +49,11 @@ namespace HotellAdmin {
 			GetOrderData();
 			ShowOrderData();
 			GetBookingData();
-			// ShowOrderSchema(); // Finn ut hvordan lasse vil ha det, manuelt eller automatisk laget skjema?
+            MakeNewOrder();
+            // ShowOrderSchema(); // Finn ut hvordan lasse vil ha det, manuelt eller automatisk laget skjema?
 
-			// Disse stopper ekstrem lag og CPU usage når vi resizer
-			ResizeBegin += new EventHandler(FormHotellAdmin_ResizeBegin);
+            // Disse stopper ekstrem lag og CPU usage når vi resizer
+            ResizeBegin += new EventHandler(FormHotellAdmin_ResizeBegin);
 			ResizeEnd += new EventHandler(FormHotellAdmin_ResizeEnd);
 
 			foreach (Control c in tableLayoutRoomsPanel.Controls) {
@@ -182,11 +183,15 @@ namespace HotellAdmin {
 		}
 
 		private void MakeNewOrder() {
-			// TODO
-			// For å manuelt lage en bestilling fra programmet
-			// Bruk OrderData.MakeOrder(parameters); ELLER
-			// Legg funksjonen over i en action handler for skjemaet
-		}
+            DataSet result = DatabaseManager.Query("SELECT romtype FROM romtyper;");
+            string roomType;
+            foreach (DataRow row in result.Tables["result"].Rows)
+            {
+                roomType = (string)row["romtype"];
+                comboBox1.Items.Add(roomType);
+            }
+            comboBox1.SelectedIndex = 0;
+        }
 
 		private void SyncOnDatabaseUpdate() {
 			// TODO ?
@@ -264,10 +269,6 @@ namespace HotellAdmin {
 			string toDateString = toDateSplit[2] + "-" + toDateSplit[1] + "-" + toDateSplit[0];
             flippedFromDate = fromDateString;
             flippedToDate = toDateString; 
-            Console.WriteLine(toDateString + "test");
-            Console.WriteLine(partOne);
-            Console.WriteLine(partTwo);
-            Console.WriteLine(flippedToDate + "dato");
             List<Room> availableRooms = BookingData.GetAvailableRoomsForPeriod(fromDateString, toDateString);
 			currentPeriod.Text = "Viser oversikt for: " + partOne + " - " + partTwo;
 
@@ -330,6 +331,17 @@ namespace HotellAdmin {
 			ShowRoomsForToday();
 		}
 
-	}
+        private void DropInConfirm_Click(object sender, EventArgs e)
+        {
+            string roomType = comboBox1.Text;
+            string fromDate = dateTimePicker1.Value.ToString("yyyy-MM-dd");
+            string toDate = dateTimePicker2.Value.ToString("yyyy-MM-dd");
+            string tlf = textBox1.Text;
+            string foreName = textBox2.Text;
+            string afterName = textBox3.Text;
+            string query = ("INSERT INTO bestillinger (romtype, fradato, tildato, tlf, fornavn, etternavn) VALUES ('" + roomType + "', '" + fromDate + "', '" + toDate + "', " + tlf + ", '" + foreName + "', '" + afterName + "');");
+            DatabaseManager.Query(query);
+        }
+    }
 
 }
