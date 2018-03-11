@@ -24,6 +24,7 @@ namespace HotellAdmin {
         string flippedToDate;
         string foreName;
         string afterName;
+        string listBoxItems;
         int orderID;
 		List<Room> roomDataList;
 		List<Order> orderDataList;
@@ -140,7 +141,7 @@ namespace HotellAdmin {
 					buttonColor = (isRoomAvailable) ? roomOpen : roomClosed;
 				} else {
 					buttonText =
-						"Rom " + (index + 1) + "\n" +
+						"Rom " + (index) + "\n" +
 						"Rommet er ikke definert i databasen";
 				}
 
@@ -285,8 +286,8 @@ namespace HotellAdmin {
 
             if (index == -1) return;
 
-            string listBoxItemString = listBoxOrders.Items[index].ToString();
-			string[] listBoxSplit = listBoxItemString.Split(':');
+            listBoxItems = listBoxOrders.Items[index].ToString();
+			string[] listBoxSplit = listBoxItems.Split(':');
             string foreName = listBoxSplit[0].Split(',')[0].Trim();
             string afterName = listBoxSplit[0].Split(',')[1].Trim(); //greit å splitte opp navna også   :     ^       )    
 			string partOne = listBoxSplit[1].Split('-')[0].Trim();
@@ -329,7 +330,7 @@ namespace HotellAdmin {
 
 			ShowRoomData(selectedFloor);
 
-			DragDropEffects dde = DoDragDrop(listBoxItemString, DragDropEffects.All);
+			DragDropEffects dde = DoDragDrop(listBoxItems, DragDropEffects.All);
 
             if (dde == DragDropEffects.All) {
                 listBoxOrders.Items.RemoveAt(index); // må fikse slik at listeboks itemet bare blir fjerna hvis endringene faktisk skjer, er feks bugga hvis vi drar den inn i en tom romlabel
@@ -353,15 +354,20 @@ namespace HotellAdmin {
 
                 Console.WriteLine(roomID);
                 Console.WriteLine(roomDataList[roomID].assigned  + "Dette er roomdata is assigned");
-
-                if (roomDataList[roomID].assigned == false) {
-                    string query = ("INSERT INTO booking(romID, bestillingID, fradato, tildato) VALUES(" + roomID + ", " + orderID + ", '" + flippedFromDate + "', '" + flippedToDate + "');");
-                    DatabaseManager.Query(query);
-                    DatabaseManager.Query("UPDATE bestillinger SET tildelt = 'true' WHERE bestillingID =" + orderID + ";");
-					roomDataList[roomID].assigned = true;
-					ShowRoomData(selectedFloor);
+                
+                if (roomDataList[roomID].wrongRoomType == false) {
+                    if (roomDataList[roomID].assigned == false)
+                    {
+                        string query = ("INSERT INTO booking(romID, bestillingID, fradato, tildato) VALUES(" + roomID + ", " + orderID + ", '" + flippedFromDate + "', '" + flippedToDate + "');");
+                        DatabaseManager.Query(query);
+                        DatabaseManager.Query("UPDATE bestillinger SET tildelt = 'true' WHERE bestillingID =" + orderID + ";");
+                        roomDataList[roomID].assigned = true;
+                        ShowRoomData(selectedFloor);
+                    }
 				} else {
-                    Console.WriteLine("TEst");
+                    listBoxOrders.Items.Add(listBoxItems);
+                    Console.WriteLine(roomID);
+                    Console.WriteLine(roomDataList[roomID].number);
                 }
 
             }
