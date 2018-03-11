@@ -121,21 +121,20 @@ namespace HotellAdmin {
 					room = roomDataList[index];
                     bool isRoomAvailable = true;
                     string roomStatus = null;
-                    if (room.wrongRoomType)
-                    {
+
+                    if (room.wrongRoomType) {
                         isRoomAvailable = false;
                         roomStatus = "Feil romtype";
-                    }
-                    else
-                    {
-                        if (room.assigned)
-                        {
+                    } else {
+
+                        if (room.assigned) {
                             isRoomAvailable = false;
                             roomStatus = "Okkupert";
                         }
+
                     }
 					buttonText =
-						"Rom " + (room.number + 1) + "\n" +
+						"Rom " + room.number + "\n" +
 						"Romtype: " + CultureInfo.CurrentCulture.TextInfo.ToTitleCase(room.type.ToLower()) + "\n" +
 						"Status: " + ((isRoomAvailable) ? "Ledig" : roomStatus); 
 					buttonColor = (isRoomAvailable) ? roomOpen : roomClosed;
@@ -196,11 +195,15 @@ namespace HotellAdmin {
 
 			for (int i = 0; i < roomDataList.Count; i++) {
 				bool isAssigned = true;
+
 				for (int j = 0; j < availableRooms.Count; j++) {
+
 					if (roomDataList[i].number == availableRooms[j].number) {
 						isAssigned = false;
 					}
+
 				}
+
 				roomDataList[i].assigned = isAssigned;
 			}
 
@@ -210,11 +213,12 @@ namespace HotellAdmin {
 		private void GetDropInData() {
             DataSet result = DatabaseManager.Query("SELECT romtype FROM romtyper;");
             string roomType;
-            foreach (DataRow row in result.Tables["result"].Rows)
-            {
+
+            foreach (DataRow row in result.Tables["result"].Rows) {
                 roomType = (string)row["romtype"];
                 dropInComboBox.Items.Add(CultureInfo.CurrentCulture.TextInfo.ToTitleCase(roomType.ToLower()));
             }
+
             dropInComboBox.SelectedIndex = 0;
         }
 
@@ -224,9 +228,8 @@ namespace HotellAdmin {
 			// Kanskje bruke DatabaseManager til å synce med xml
 		}
 
-		// Vis en boks som feedback at programmet henter data?
 		private void ShowLoadingBox() {
-
+			// Vis en boks som feedback at programmet henter data?
 		}
 
 		private void ShowError(string errorMsg) {
@@ -292,7 +295,6 @@ namespace HotellAdmin {
             string orderIDString = listBoxSplit[3].Trim();
             orderID = Int32.Parse(orderIDString);
 
-
             string[] fromDateSplit = partOne.Split('.');
 			string[] toDateSplit = partTwo.Split('.');
 
@@ -306,18 +308,21 @@ namespace HotellAdmin {
 			for (int i = 0; i < roomDataList.Count; i++) {
 				bool isAssigned = true;
                 bool isWrongRoomType = true;
+
 				for(int j = 0; j < availableRooms.Count; j++) {
 					if(roomDataList[i].number == availableRooms[j].number) {
 						isAssigned = false;
 					} 
 				}
-                for (int j = 0; j < availableRooms.Count; j++)
-                {
-                    if (roomDataList[i].type == roomType)
-                    {
+
+                for (int j = 0; j < availableRooms.Count; j++) {
+
+                    if (roomDataList[i].type == roomType) {
                         isWrongRoomType = false;
                     }
+
                 }
+
                 roomDataList[i].assigned = isAssigned;
                 roomDataList[i].wrongRoomType = isWrongRoomType;
 			}
@@ -342,7 +347,7 @@ namespace HotellAdmin {
                 string roomInfo = splitLabelString[0];                    //Henter første linje fra stringFromLabel, dette er rom X
                 string[] splitRoomInfo = roomInfo.Split(' ');          //Splitter opp stringen romInfo
                 string roomIDString = splitRoomInfo[1];                      //Henter det andre tegnet i stringen som er tallet
-                int roomID = Int32.Parse(roomIDString) - 1;
+                int roomID = Int32.Parse(roomIDString);
 
 				if (roomDataList.ElementAtOrDefault(roomID) == null) return;
 
@@ -374,6 +379,7 @@ namespace HotellAdmin {
 
 		//Sjekk om dataene fylt inn i drop in er riktig
 		private bool ValidateForm() {
+			//Husk sjekk for om den er tom
 			return true;
 		}
 
@@ -404,25 +410,24 @@ namespace HotellAdmin {
 			dropInPhoneNumber.Text = "";
 		}
 
-        private void colorBlindMode_CheckedChanged(object sender, EventArgs e)
-        {
-            if (colorBlindMode.Checked)
-            {
+        private void colorBlindMode_CheckedChanged(object sender, EventArgs e) {
+
+            if (colorBlindMode.Checked) {
                roomOpen = Color.FromArgb(0, 174, 239); //Blåfarge
                roomClosed = Color.FromArgb(255, 99, 71);
-                Properties.Settings.Default.ColorBlind = true;
+               Properties.Settings.Default.ColorBlind = true;
             }
-            if (!colorBlindMode.Checked)
-            {
+
+            if (!colorBlindMode.Checked) {
                roomOpen = Color.FromArgb(152, 251, 152); //50 205 50
                roomClosed = Color.FromArgb(255, 99, 71); //176 23 31
-                Properties.Settings.Default.ColorBlind = false;
+               Properties.Settings.Default.ColorBlind = false;
             }
+
             ShowRoomData(1);
         }
 
-        private void FormHotellAdmin_FormClosing(object sender, FormClosingEventArgs e)
-        {
+        private void FormHotellAdmin_FormClosing(object sender, FormClosingEventArgs e) {
             Properties.Settings.Default.FormSize = this.Size;
             Properties.Settings.Default.Location = this.Location;
             Properties.Settings.Default.Save();
