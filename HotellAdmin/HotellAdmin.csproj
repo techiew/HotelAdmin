@@ -145,10 +145,7 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\Toppbar.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\Toppbar1.png" />
+    <Content Include="Resources\toppbar.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

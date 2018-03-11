@@ -10,8 +10,7 @@ using System.Windows.Forms;
 // OrderData.cs - Håndtere henting av bestillingsdata
 // RoomData.cs - Håndtere henting av romdata
 // DatabaseManager.cs - Håndtere funksjoner for SQL kommandoer, og åpne/lukke DB tilkobling
-// Både RoomData og OrderData kan bruke DatabaseManager.cs
-// BookingData.cs ???? - Hente data om booka rom, adde en funksjon som viser hvilke rom som er ledig og opptatt.
+// BookingData.cs - Har funksjoner som viser om rom er ledige eller opptatt for en gitt periode
 
 namespace HotellAdmin {
 
@@ -49,7 +48,7 @@ namespace HotellAdmin {
 			GetOrderData();
 			ShowOrderData();
 			GetBookingData();
-            MakeNewOrder();
+			GetDropInData();
             // ShowOrderSchema(); // Finn ut hvordan lasse vil ha det, manuelt eller automatisk laget skjema?
 
             // Disse stopper ekstrem lag og CPU usage når vi resizer
@@ -69,6 +68,8 @@ namespace HotellAdmin {
 			foreach (Control c in tableLayoutFloorButtons.Controls.OfType<Button>()) {
 				c.MouseDown += new MouseEventHandler(buttons_MouseDown);
             }
+
+			headerPictureBox.BackColor = Color.FromArgb(45, 48, 50);
 
 		}
 
@@ -136,6 +137,8 @@ namespace HotellAdmin {
 
 		private void ShowOrderData() {
 
+			listBoxOrders.Items.Clear();
+
 			if (orderDataList == null || orderDataList.Count == 0) {
 				return;
 			}
@@ -182,21 +185,26 @@ namespace HotellAdmin {
 			ShowRoomData(selectedFloor);
 		}
 
-		private void MakeNewOrder() {
+		private void GetDropInData() {
             DataSet result = DatabaseManager.Query("SELECT romtype FROM romtyper;");
             string roomType;
             foreach (DataRow row in result.Tables["result"].Rows)
             {
                 roomType = (string)row["romtype"];
-                comboBox1.Items.Add(roomType);
+                dropInComboBox.Items.Add(CultureInfo.CurrentCulture.TextInfo.ToTitleCase(roomType.ToLower()));
             }
-            comboBox1.SelectedIndex = 0;
+            dropInComboBox.SelectedIndex = 0;
         }
 
 		private void SyncOnDatabaseUpdate() {
 			// TODO ?
 			// Sync XML med database når en oppdatering skjer fra programmet vårt
 			// Kanskje bruke DatabaseManager til å synce med xml
+		}
+
+		// Vis en boks som feedback at programmet henter data?
+		private void ShowLoadingBox() {
+
 		}
 
 		private void ShowError(string errorMsg) {
@@ -329,19 +337,39 @@ namespace HotellAdmin {
 
 		private void currentPeriod_Click(object sender, EventArgs e) {
 			ShowRoomsForToday();
+			currentPeriod.Text = "Viser oversikt for: i dag";
 		}
 
-        private void DropInConfirm_Click(object sender, EventArgs e)
-        {
-            string roomType = comboBox1.Text;
-            string fromDate = dateTimePicker1.Value.ToString("yyyy-MM-dd");
-            string toDate = dateTimePicker2.Value.ToString("yyyy-MM-dd");
-            string tlf = textBox1.Text;
-            string foreName = textBox2.Text;
-            string afterName = textBox3.Text;
+		//Sjekk om dataene fylt inn i drop in er riktig
+		private bool ValidateForm() {
+			return true;
+		}
+
+        private void dropInConfirm_Click(object sender, EventArgs e) {
+			bool validOrder = ValidateForm();
+
+			if (!validOrder) return;
+
+            string roomType = dropInComboBox.Text;
+            string fromDate = dropInFromDate.Value.ToString("yyyy-MM-dd");
+            string toDate = dropInToDate.Value.ToString("yyyy-MM-dd");
+            string tlf = dropInPhoneNumber.Text;
+            string foreName = dropInFirstname.Text;
+            string afterName = dropInLastname.Text;
             string query = ("INSERT INTO bestillinger (romtype, fradato, tildato, tlf, fornavn, etternavn) VALUES ('" + roomType + "', '" + fromDate + "', '" + toDate + "', " + tlf + ", '" + foreName + "', '" + afterName + "');");
             DatabaseManager.Query(query);
+			GetOrderData();
+			ShowOrderData();
         }
-    }
+
+		private void dropInReset_Click(object sender, EventArgs e) {
+			dropInFromDate.Text = "";
+			dropInToDate.Text = "";
+			dropInFirstname.Text = "";
+			dropInLastname.Text = "";
+			dropInPhoneNumber.Text = "";
+		}
+
+	}
 
 }
