@@ -20,12 +20,15 @@ namespace HotellAdmin {
 		int floors = 4;
 		int roomsPerFloor = 11; // sett til # av labels i rutene?
 		int selectedFloor = 1;
-        string flippedFromDate;
+		int orderID;
+		string flippedFromDate;
         string flippedToDate;
         string foreName;
         string afterName;
         string listBoxItems;
-        int orderID;
+
+		bool loginRequired = true;
+
 		List<Room> roomDataList;
 		List<Order> orderDataList;
 		List<Booking> bookingDataList;
@@ -37,26 +40,35 @@ namespace HotellAdmin {
 
 		Color roomOpen = Color.FromArgb(152, 251, 152); //50 205 50
 		Color roomClosed = Color.FromArgb(255, 99, 71); //176 23 31
+		Color roomWrongType = Color.FromArgb(255, 255, 150);
 
 		public FormHotellAdmin() {
 			InitializeComponent();
         }
 
 		private void FormHotellAdmin_Load(object sender, EventArgs e) {
-            // RequestLogin(); // Logge inn for å bruke programmet?
+
+			OpenDatabase();
+			if (loginRequired) RequestLogin();
+
             this.Size = Properties.Settings.Default.FormSize;
             colorBlindMode.Checked = Properties.Settings.Default.ColorBlind;
-            OpenDatabase();
+			headerPictureBox.BackColor = Color.FromArgb(45, 48, 50);
+
 			GetRoomData();
 			ShowRoomData(1);
 			GetOrderData();
 			ShowOrderData();
 			GetBookingData();
 			GetDropInData();
-            // ShowOrderSchema(); // Finn ut hvordan lasse vil ha det, manuelt eller automatisk laget skjema?
+			// ShowOrderSchema(); // Finn ut hvordan lasse vil ha det, manuelt eller automatisk laget skjema?
 
-            // Disse stopper ekstrem lag og CPU usage når vi resizer
-            ResizeBegin += new EventHandler(FormHotellAdmin_ResizeBegin);
+			//Bare for å teste datagrid, ligger i innstillinger
+			dataGridView1.DataSource = DatabaseManager.Query("SELECT * FROM rom ORDER BY romID ASC;");
+			dataGridView1.DataMember = "result"; // bare noe testing greier
+
+			// Disse stopper ekstrem lag og CPU usage når vi resizer
+			ResizeBegin += new EventHandler(FormHotellAdmin_ResizeBegin);
 			ResizeEnd += new EventHandler(FormHotellAdmin_ResizeEnd);
 
 			foreach (Control c in tableLayoutRoomsPanel.Controls) {
@@ -68,14 +80,10 @@ namespace HotellAdmin {
 			buttonSecondFloor.MouseDown += new MouseEventHandler(buttonSecondFloor_MouseDown);
 			buttonThirdFloor.MouseDown += new MouseEventHandler(buttonThirdFloor_MouseDown);
 
-
-
             //La denne loopen ligge under de andre, tror det gjør slik at denne eventen blir triggera sist, og det er viktig
             foreach (Control c in tableLayoutFloorButtons.Controls.OfType<Button>()) {
 				c.MouseDown += new MouseEventHandler(buttons_MouseDown);
             }
-
-			headerPictureBox.BackColor = Color.FromArgb(45, 48, 50);
 
 		}
 
@@ -88,7 +96,6 @@ namespace HotellAdmin {
 
 		private void GetRoomData() {
 			roomDataList = rd.GetData();
-
 			//if (roomDataList.Count != (floors * roomsPerFloor)) {
 			//	ShowError("Feil med romdata."); // midlertidig feilhåndtering, burde endres?
 			//} 
@@ -138,7 +145,7 @@ namespace HotellAdmin {
 						"Rom " + (room.number + 1) + "\n" +
 						"Romtype: " + CultureInfo.CurrentCulture.TextInfo.ToTitleCase(room.type.ToLower()) + "\n" +
 						"Status: " + ((isRoomAvailable) ? "Ledig" : roomStatus); 
-					buttonColor = (isRoomAvailable) ? roomOpen : roomClosed;
+					buttonColor = (isRoomAvailable) ? roomOpen : (room.wrongRoomType) ? roomWrongType : roomClosed;
 				} else {
 					buttonText =
 						"Rom " + (index) + "\n" +
@@ -238,18 +245,33 @@ namespace HotellAdmin {
 			// vis popup vindu med error
 		}
 
-		private void FormHotellAdmin_ResizeBegin(Object sender, EventArgs e) {
-			SuspendLayout();
+		private void RequestLogin() {
+			LoginWindow lw = new LoginWindow();
+			var result = lw.ShowDialog();
+
+			if (result == DialogResult.Abort) {
+				this.Close();
+			} else if (result == DialogResult.OK) {
+				Console.WriteLine("Innlogging godkjent.");
+			}
+
 		}
 
-		private void FormHotellAdmin_ResizeEnd(Object sender, EventArgs e) {
-			ResumeLayout();
+		//Sjekk om dataene fylt inn i drop in er riktig
+		private bool ValidateForm() {
+			//Husk sjekk for om den er tom
+			return true;
 		}
 
 		// En destructor for å lukke databasetilkoblingen når vi lukker programmet
 		~FormHotellAdmin() {
 			DatabaseManager.Close();
 		}
+
+
+
+
+		//EVENT HANDLERS ---------------------------------------------------------------------------
 
 		//Burde egentlig ha en felles event handler for disse, men knappene skal gjøre litt forskjellige ting.
 		//så en felles handler hadde gjort koden mer DRY, men blir mer knotete å legge til forskjellige funksjonalitet
@@ -395,12 +417,6 @@ namespace HotellAdmin {
 			currentPeriod.Text = "Viser oversikt for: i dag";
 		}
 
-		//Sjekk om dataene fylt inn i drop in er riktig
-		private bool ValidateForm() {
-			//Husk sjekk for om den er tom
-			return true;
-		}
-
         private void dropInConfirm_Click(object sender, EventArgs e) {
 			bool validOrder = ValidateForm();
 
@@ -428,7 +444,7 @@ namespace HotellAdmin {
 			dropInPhoneNumber.Text = "";
 		}
 
-        private void colorBlindMode_CheckedChanged(object sender, EventArgs e) {
+		private void colorBlindMode_CheckedChanged(object sender, EventArgs e) {
 
             if (colorBlindMode.Checked) {
                roomOpen = Color.FromArgb(0, 174, 239); //Blåfarge
@@ -450,6 +466,15 @@ namespace HotellAdmin {
             Properties.Settings.Default.Location = this.Location;
             Properties.Settings.Default.Save();
         }
-    }
+
+		private void FormHotellAdmin_ResizeBegin(Object sender, EventArgs e) {
+			SuspendLayout();
+		}
+
+		private void FormHotellAdmin_ResizeEnd(Object sender, EventArgs e) {
+			ResumeLayout();
+		}
+
+	}
 
 }

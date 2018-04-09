@@ -10,11 +10,11 @@ namespace HotellAdmin {
 
 	static class DatabaseManager {
 
-		static MySqlConnection conn = null;
-		static MySqlCommand cmd;
-		static MySqlCommandBuilder cb;
-		static MySqlDataAdapter da;
-		static DataSet ds;
+		private static MySqlConnection conn = null;
+		private static MySqlCommand cmd;
+		private static MySqlCommandBuilder cb;
+		private static MySqlDataAdapter da;
+		private static DataSet ds;
 
 		public static void Open(string server, string port, string database, string username, string password) {
 
@@ -58,13 +58,13 @@ namespace HotellAdmin {
 				return null;
 			}
 
-			Console.WriteLine(sql);
-
 			cmd = new MySqlCommand(sql, conn);
 			da = new MySqlDataAdapter(cmd);
 			cb = new MySqlCommandBuilder(da);
 			ds = new DataSet("result");
 			da.Fill(ds, "result");
+
+			Console.WriteLine(sql);
 
 			return ds;
 		}

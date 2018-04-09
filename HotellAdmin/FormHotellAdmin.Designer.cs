@@ -75,6 +75,7 @@
 			this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
 			this.listView1 = new System.Windows.Forms.ListView();
 			this.colorBlindMode = new System.Windows.Forms.CheckBox();
+			this.dataGridView1 = new System.Windows.Forms.DataGridView();
 			this.headerPictureBox = new System.Windows.Forms.PictureBox();
 			this.tabControl1.SuspendLayout();
 			this.tabBooking.SuspendLayout();
@@ -92,6 +93,7 @@
 			this.DropInButtons.SuspendLayout();
 			this.tabOptions.SuspendLayout();
 			this.tableLayoutPanel1.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.headerPictureBox)).BeginInit();
 			this.SuspendLayout();
 			// 
@@ -530,11 +532,11 @@
 			this.tableLayoutDropIn.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.tableLayoutDropIn.BackColor = System.Drawing.Color.Gainsboro;
+			this.tableLayoutDropIn.BackColor = System.Drawing.Color.WhiteSmoke;
 			this.tableLayoutDropIn.CellBorderStyle = System.Windows.Forms.TableLayoutPanelCellBorderStyle.Single;
 			this.tableLayoutDropIn.ColumnCount = 2;
-			this.tableLayoutDropIn.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 2.898551F));
-			this.tableLayoutDropIn.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 97.10145F));
+			this.tableLayoutDropIn.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 2.823019F));
+			this.tableLayoutDropIn.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 97.17698F));
 			this.tableLayoutDropIn.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
 			this.tableLayoutDropIn.Controls.Add(this.DropInPerson, 1, 3);
 			this.tableLayoutDropIn.Controls.Add(this.DropInPeriod, 1, 2);
@@ -565,9 +567,9 @@
 			this.DropInPerson.Controls.Add(this.dropInLastname);
 			this.DropInPerson.Controls.Add(this.dropInFirstname);
 			this.DropInPerson.Controls.Add(this.dropInPhoneNumber);
-			this.DropInPerson.Location = new System.Drawing.Point(31, 200);
+			this.DropInPerson.Location = new System.Drawing.Point(30, 200);
 			this.DropInPerson.Name = "DropInPerson";
-			this.DropInPerson.Size = new System.Drawing.Size(887, 142);
+			this.DropInPerson.Size = new System.Drawing.Size(888, 142);
 			this.DropInPerson.TabIndex = 4;
 			// 
 			// label3
@@ -630,9 +632,9 @@
 			this.DropInPeriod.Controls.Add(this.fromDateLabel);
 			this.DropInPeriod.Controls.Add(this.dropInToDate);
 			this.DropInPeriod.Controls.Add(this.dropInFromDate);
-			this.DropInPeriod.Location = new System.Drawing.Point(31, 140);
+			this.DropInPeriod.Location = new System.Drawing.Point(30, 140);
 			this.DropInPeriod.Name = "DropInPeriod";
-			this.DropInPeriod.Size = new System.Drawing.Size(887, 53);
+			this.DropInPeriod.Size = new System.Drawing.Size(888, 53);
 			this.DropInPeriod.TabIndex = 1;
 			// 
 			// toDateLabel
@@ -680,9 +682,9 @@
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.DropInCombo.Controls.Add(this.roomTypeLabel);
 			this.DropInCombo.Controls.Add(this.dropInComboBox);
-			this.DropInCombo.Location = new System.Drawing.Point(31, 76);
+			this.DropInCombo.Location = new System.Drawing.Point(30, 76);
 			this.DropInCombo.Name = "DropInCombo";
-			this.DropInCombo.Size = new System.Drawing.Size(887, 57);
+			this.DropInCombo.Size = new System.Drawing.Size(888, 57);
 			this.DropInCombo.TabIndex = 5;
 			// 
 			// roomTypeLabel
@@ -710,11 +712,11 @@
 			this.DropInHeader.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.DropInHeader.BackColor = System.Drawing.Color.Gainsboro;
+			this.DropInHeader.BackColor = System.Drawing.Color.WhiteSmoke;
 			this.DropInHeader.Controls.Add(this.DropInHeaderLabel);
-			this.DropInHeader.Location = new System.Drawing.Point(31, 4);
+			this.DropInHeader.Location = new System.Drawing.Point(30, 4);
 			this.DropInHeader.Name = "DropInHeader";
-			this.DropInHeader.Size = new System.Drawing.Size(887, 65);
+			this.DropInHeader.Size = new System.Drawing.Size(888, 65);
 			this.DropInHeader.TabIndex = 6;
 			// 
 			// DropInHeaderLabel
@@ -735,9 +737,9 @@
 			this.DropInButtons.Controls.Add(this.DropInMessage);
 			this.DropInButtons.Controls.Add(this.dropInReset);
 			this.DropInButtons.Controls.Add(this.dropInConfirm);
-			this.DropInButtons.Location = new System.Drawing.Point(31, 349);
+			this.DropInButtons.Location = new System.Drawing.Point(30, 349);
 			this.DropInButtons.Name = "DropInButtons";
-			this.DropInButtons.Size = new System.Drawing.Size(887, 58);
+			this.DropInButtons.Size = new System.Drawing.Size(888, 58);
 			this.DropInButtons.TabIndex = 7;
 			// 
 			// DropInMessage
@@ -795,6 +797,7 @@
 			this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
 			this.tableLayoutPanel1.Controls.Add(this.listView1, 0, 0);
 			this.tableLayoutPanel1.Controls.Add(this.colorBlindMode, 1, 0);
+			this.tableLayoutPanel1.Controls.Add(this.dataGridView1, 0, 1);
 			this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
 			this.tableLayoutPanel1.Name = "tableLayoutPanel1";
 			this.tableLayoutPanel1.RowCount = 2;
@@ -822,6 +825,14 @@
 			this.colorBlindMode.Text = "Fargeblind Modus";
 			this.colorBlindMode.UseVisualStyleBackColor = true;
 			this.colorBlindMode.CheckedChanged += new System.EventHandler(this.colorBlindMode_CheckedChanged);
+			// 
+			// dataGridView1
+			// 
+			this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+			this.dataGridView1.Location = new System.Drawing.Point(3, 240);
+			this.dataGridView1.Name = "dataGridView1";
+			this.dataGridView1.Size = new System.Drawing.Size(240, 150);
+			this.dataGridView1.TabIndex = 2;
 			// 
 			// headerPictureBox
 			// 
@@ -873,6 +884,7 @@
 			this.tabOptions.ResumeLayout(false);
 			this.tableLayoutPanel1.ResumeLayout(false);
 			this.tableLayoutPanel1.PerformLayout();
+			((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.headerPictureBox)).EndInit();
 			this.ResumeLayout(false);
 
@@ -932,6 +944,7 @@
 		private System.Windows.Forms.Label toDateLabel;
 		private System.Windows.Forms.Label DropInMessage;
         private System.Windows.Forms.CheckBox colorBlindMode;
-    }
+		private System.Windows.Forms.DataGridView dataGridView1;
+	}
 }
 
