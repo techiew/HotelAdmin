@@ -54,8 +54,8 @@ namespace HotellAdmin {
             this.Size = Properties.Settings.Default.FormSize;
             colorBlindMode.Checked = Properties.Settings.Default.ColorBlind;
 			headerPictureBox.BackColor = Color.FromArgb(45, 48, 50);
-
-			GetRoomData();
+            Console.WriteLine("App loada");
+            GetRoomData();
 			ShowRoomData(1);
 			GetOrderData();
 			ShowOrderData();
