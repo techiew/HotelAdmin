@@ -11,7 +11,7 @@ using System.Configuration;
 // FormHotellAdmin.cs - Håndtere visning av data
 // OrderData.cs - Håndtere henting av bestillingsdata
 // RoomData.cs - Håndtere henting av romdata
-// DatabaseManager.cs - Håndtere funksjoner for SQL kommandoer, og åpne/lukke DB tilkobling
+// DatabaseManager.cs - Håndtere funksjoner for datasett, og åpne/lukke DB tilkobling
 // BookingData.cs - Har funksjoner som viser om rom er ledige eller opptatt for en gitt periode
 
 namespace HotellAdmin {
@@ -23,11 +23,9 @@ namespace HotellAdmin {
 		int orderID;
 		string flippedFromDate;
         string flippedToDate;
-        string foreName;
-        string afterName;
         string listBoxItems;
 
-		bool loginRequired = true;
+		bool loginRequired = false;
 
 		List<Room> roomDataList;
 		List<Order> orderDataList;
@@ -49,23 +47,23 @@ namespace HotellAdmin {
 		private void FormHotellAdmin_Load(object sender, EventArgs e) {
 
 			OpenDatabase();
+			if (DatabaseManager.connected == false) { ShowDatabaseErrorAndExit(); return; } 
 			if (loginRequired) RequestLogin();
 
             this.Size = Properties.Settings.Default.FormSize;
             colorBlindMode.Checked = Properties.Settings.Default.ColorBlind;
 			headerPictureBox.BackColor = Color.FromArgb(45, 48, 50);
-            Console.WriteLine("App loada");
+
             GetRoomData();
 			ShowRoomData(1);
 			GetOrderData();
 			ShowOrderData();
 			GetBookingData();
 			GetDropInData();
-			// ShowOrderSchema(); // Finn ut hvordan lasse vil ha det, manuelt eller automatisk laget skjema?
 
-			//Bare for å teste datagrid, ligger i innstillinger
+			//Bare for å teste datagrid, ligger i innstillinger på formen
 			dataGridView1.DataSource = DatabaseManager.Query("SELECT * FROM rom ORDER BY romID ASC;");
-			dataGridView1.DataMember = "result"; // bare noe testing greier
+			dataGridView1.DataMember = "result";
 
 			// Disse stopper ekstrem lag og CPU usage når vi resizer
 			ResizeBegin += new EventHandler(FormHotellAdmin_ResizeBegin);
@@ -87,8 +85,6 @@ namespace HotellAdmin {
 
 		}
 
-
-
         private void OpenDatabase() {
 			//string db = @"server=46.9.246.190;database=hotell;port=24440;userid=admin;password=admin;";
 			DatabaseManager.Open("46.9.246.190", "24440", "hotell", "admin", "admin");
@@ -103,10 +99,6 @@ namespace HotellAdmin {
 		}
 
 		private void ShowRoomData(int floor) {
-
-			if(roomDataList == null || roomDataList.Count == 0) {
-				return;
-			}
 
 			if(roomLabelList.Count == 0) {
 
@@ -219,15 +211,17 @@ namespace HotellAdmin {
 		}
 
 		private void GetDropInData() {
-            DataSet result = DatabaseManager.Query("SELECT romtype FROM romtyper;");
+            DataSet result = DatabaseManager.Query("SELECT romtype FROM romtyper;"); // TODO: må fikse han karen her, funker ikke i offline modus
             string roomType;
 
-            foreach (DataRow row in result.Tables["result"].Rows) {
-                roomType = (string)row["romtype"];
-                dropInComboBox.Items.Add(CultureInfo.CurrentCulture.TextInfo.ToTitleCase(roomType.ToLower()));
-            }
+			if (result == null) return;
 
-            dropInComboBox.SelectedIndex = 0;
+			foreach (DataRow row in result.Tables["result"].Rows) {
+				roomType = (string)row["romtype"];
+				dropInComboBox.Items.Add(CultureInfo.CurrentCulture.TextInfo.ToTitleCase(roomType.ToLower()));
+			}
+
+			dropInComboBox.SelectedIndex = 0;
         }
 
 		private void SyncOnDatabaseUpdate() {
@@ -243,6 +237,12 @@ namespace HotellAdmin {
 		private void ShowError(string errorMsg) {
 			// TODO
 			// vis popup vindu med error
+		}
+
+		private void ShowDatabaseErrorAndExit() {
+			MessageBox.Show("Kunne ikke koble til databasen, prøv på nytt.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+			Console.WriteLine("Kunne ikke koble til databasen, prøv på nytt.");
+			this.Close();
 		}
 
 		private void RequestLogin() {
@@ -310,8 +310,8 @@ namespace HotellAdmin {
 
             listBoxItems = listBoxOrders.Items[index].ToString();
 			string[] listBoxSplit = listBoxItems.Split(':');
-            string foreName = listBoxSplit[0].Split(',')[0].Trim();
-            string afterName = listBoxSplit[0].Split(',')[1].Trim(); //greit å splitte opp navna også   :     ^       )    
+            string firstName = listBoxSplit[0].Split(',')[0].Trim();
+            string lastName = listBoxSplit[0].Split(',')[1].Trim(); //greit å splitte opp navna også   :     ^       )    
 			string partOne = listBoxSplit[1].Split('-')[0].Trim();
 			string partTwo = listBoxSplit[1].Split('-')[1].Trim();
             string roomType = listBoxSplit[2].Trim().ToLower();
@@ -380,21 +380,27 @@ namespace HotellAdmin {
                 Console.WriteLine(roomDataList[roomID].assigned  + "Dette er roomdata is assigned");
                 
                 if (roomDataList[roomID].wrongRoomType == false) {
-                    if (roomDataList[roomID].assigned == false)
-                    {
-                        string query = ("INSERT INTO booking(romID, bestillingID, fradato, tildato) VALUES(" + roomID + ", " + orderID + ", '" + flippedFromDate + "', '" + flippedToDate + "');");
-                        DatabaseManager.Query(query);
-                        DatabaseManager.Query("UPDATE bestillinger SET tildelt = 'true' WHERE bestillingID =" + orderID + ";");
+
+					if (roomDataList[roomID].assigned == false) {
+						DataRow row = DatabaseManager.bookingTable.NewRow();
+						row["romID"] = roomID;
+						row["bestillingID"] = orderID;
+						row["fradato"] = flippedFromDate;
+						row["tildato"] = flippedToDate;
+						DatabaseManager.InsertRow("booking", row);
+
+						row = DatabaseManager.ordersTable.Rows.Find(orderID);
+						row["tildelt"] = "true";
+						DatabaseManager.UpdateRow("bestillinger", orderID.ToString(), row);
+
                         roomDataList[roomID].assigned = true;
                         ShowRoomData(selectedFloor);
-                    }
-                    else
-                    {
+                    } else {
                         listBoxOrders.Items.Add(listBoxItems);
                         Console.WriteLine(listBoxItems);
                     }
-                }
-                else {
+
+                } else {
                     listBoxOrders.Items.Add(listBoxItems);
                     Console.WriteLine(listBoxItems);
                 }
@@ -426,10 +432,19 @@ namespace HotellAdmin {
             string fromDate = dropInFromDate.Value.ToString("yyyy-MM-dd");
             string toDate = dropInToDate.Value.ToString("yyyy-MM-dd");
             string tlf = dropInPhoneNumber.Text;
-            string foreName = dropInFirstname.Text;
-            string afterName = dropInLastname.Text;
-            string query = ("INSERT INTO bestillinger (romtype, fradato, tildato, tlf, fornavn, etternavn) VALUES ('" + roomType + "', '" + fromDate + "', '" + toDate + "', " + tlf + ", '" + foreName + "', '" + afterName + "');");
-            DatabaseManager.Query(query);
+            string firstName = dropInFirstname.Text;
+            string lastName = dropInLastname.Text;
+			DataRow row = DatabaseManager.ordersTable.NewRow();
+			row["romtype"] = roomType;
+			row["fradato"] = fromDate;
+			row["tildato"] = toDate;
+			row["tildelt"] = false;
+			row["tlf"] = tlf;
+			row["fornavn"] = firstName;
+			row["etternavn"] = lastName;
+			DatabaseManager.InsertRow("bestillinger", row);
+           // DatabaseManager.Query("INSERT INTO bestillinger (romtype, fradato, tildato, tlf, fornavn, etternavn)" +
+			//	"VALUES ('" + roomType + "', '" + fromDate + "', '" + toDate + "', " + tlf + ", '" + foreName + "', '" + afterName + "');");
             DropInMessage.Text = "Bestillingen har nå blitt registrert!";
             DropInMessage.Visible = true;
             GetOrderData();
@@ -473,6 +488,10 @@ namespace HotellAdmin {
 
 		private void FormHotellAdmin_ResizeEnd(Object sender, EventArgs e) {
 			ResumeLayout();
+		}
+
+		private void syncXMLNowButton_Click(object sender, EventArgs e) {
+			DatabaseManager.SyncXML();
 		}
 
 	}

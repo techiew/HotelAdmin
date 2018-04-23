@@ -13,19 +13,17 @@ namespace HotellAdmin {
 	public partial class LoginWindow : Form {
 
 		string errorMsg;
-        string rememberedUserName;
+
 		public LoginWindow() {
 			InitializeComponent();
 			errorMsg = "";
 			loginLabelErrorMsg.Text = errorMsg;
 		}
         
-        private void LoginWindow_Load_1(object sender, EventArgs e)
-        {
+        private void LoginWindow_Load(object sender, EventArgs e) {
             this.Size = Properties.Settings.Default.PopupSize;
             usernameCheckBox.Checked = Properties.Settings.Default.RememberUsername;
             loginUsername.Text = Properties.Settings.Default.RememberedUsername;
-            Console.WriteLine(Properties.Settings.Default.RememberUsername);
         }
 
         private void loginSubmit_Click(object sender, EventArgs e) {
@@ -38,7 +36,7 @@ namespace HotellAdmin {
 			}
 
 			if (Properties.Settings.Default.RememberUsername == true) {
-                rememberedUserName = loginUsername.Text.ToLower();
+                Properties.Settings.Default.RememberedUsername = loginUsername.Text.ToLower();
 			}
 
 			this.DialogResult = DialogResult.OK;
@@ -88,14 +86,9 @@ namespace HotellAdmin {
 			if(Properties.Settings.Default.RememberUsername == false) {
 				Properties.Settings.Default.RememberedUsername = "";
 			}
-            if (Properties.Settings.Default.RememberUsername == true) //fjern han her hvis du vil at brukernavnet bare skal lagres når du logger inn. han her bodde originalt bare på loginSubmit_click
-            {
-                rememberedUserName = loginUsername.Text.ToLower();
-            }
 
             Properties.Settings.Default.PopupSize = this.Size;
-			Properties.Settings.Default.PopupLocation = this.Location;
-            Properties.Settings.Default.RememberedUsername = rememberedUserName;
+            Properties.Settings.Default.RememberedUsername = loginUsername.Text;
 
             Properties.Settings.Default.Save();
 
@@ -107,10 +100,8 @@ namespace HotellAdmin {
 
 			if(usernameCheckBox.Checked) {
 				Properties.Settings.Default.RememberUsername = true;
-			}
-            if (!usernameCheckBox.Checked) {
+			} else {
 				Properties.Settings.Default.RememberUsername = false;
-                Console.WriteLine("Hei");
 			}
 
 		}
@@ -162,10 +153,6 @@ namespace HotellAdmin {
 				e.SuppressKeyPress = true;
 			}
 
-		}
-
-		private void LoginWindow_SizeChanged(object sender, EventArgs e) {
-			
 		}
 
     }

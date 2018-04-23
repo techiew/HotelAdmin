@@ -10,11 +10,11 @@ namespace HotellAdmin {
 	class RoomData {
 
 		public List<Room> GetData() {
-			
-			DataSet result = DatabaseManager.Query("SELECT * FROM rom ORDER BY romID ASC;");
+
+			DataTable result = DatabaseManager.ds.Tables["rom"];
 
 			if(result == null) {
-				Console.WriteLine("RoomData.GetData: Datasettet er tomt");
+				Console.WriteLine("RoomData.GetData: DataTable er tomt");
 				return null;
 			}
 
@@ -22,7 +22,7 @@ namespace HotellAdmin {
 			int number;
 			string type;
 
-			foreach(DataRow row in result.Tables["result"].Rows) {
+			foreach(DataRow row in result.Rows) {
 				number = (int)row["romID"];
 				type = (string)row["romtype"];
 				rooms.Add(new Room(number, type, false, false));

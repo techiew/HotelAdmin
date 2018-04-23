@@ -10,15 +10,20 @@ namespace HotellAdmin {
 	class OrderData {
 
         public List<Order> GetData() {
+			DataTable result = null;
 
-            DataSet result = DatabaseManager.Query("SELECT bestillingID, romtype, fradato, tildato, tildelt, tlf, fornavn, etternavn FROM bestillinger WHERE tildelt = 'false';"); // Må adde "WHERE status = false" eller hva faen                                                                                            
-            List<Order> OrderList = new List<Order>();
+			try {
+				result = DatabaseManager.ds.Tables["bestillinger"].Select("tildelt = false").CopyToDataTable();
+			} catch (InvalidOperationException) {
+				
+			}
 
 			if (result == null) {
 				Console.WriteLine("OrderData.GetData: Datasettet er tomt");
 				return null;
 			}
 
+			List<Order> OrderList = new List<Order>();
 			int orderID;
 			string roomType;
 			DateTime fromDate;
@@ -28,7 +33,7 @@ namespace HotellAdmin {
 			string firstName;
 			string lastName;
 
-			foreach (DataRow row in result.Tables["result"].Rows) {
+			foreach (DataRow row in result.Rows) {
 				orderID = (int)row["bestillingID"];
 				roomType = (string)row["romtype"];
 				fromDate = (DateTime)row["fradato"];
