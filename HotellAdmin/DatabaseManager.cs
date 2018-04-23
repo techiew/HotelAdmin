@@ -13,6 +13,7 @@ namespace HotellAdmin {
 		private static MySqlConnection conn = null;
 		public static bool connected = false;
 		public static bool autoSyncXML = true;
+		public static bool isLocal = false;
 		public static DataSet ds;
 		public static DataTable employeesTable;
 		public static DataTable ordersTable;
@@ -175,9 +176,9 @@ namespace HotellAdmin {
 
 			string outputString = "";
 			for(int i = 0; i < rowData.ItemArray.Length; i++) {
-				outputString += rowData[i].ToString();
+				outputString += rowData[i].ToString() + ", ";
 			}
-			Console.WriteLine("INSERT: " + outputString);
+			Console.WriteLine("INSERT: " + outputString + "INTO " + tableName);
 
 			ds.AcceptChanges();
 			OnUpdate();
@@ -230,9 +231,9 @@ namespace HotellAdmin {
 
 			string outputString = "";
 			for (int i = 0; i < rowData.ItemArray.Length; i++) {
-				outputString += rowData[i].ToString();
+				outputString += rowData[i].ToString() + ", ";
 			}
-			Console.WriteLine("UPDATE: " + outputString);
+			Console.WriteLine("UPDATE: " + outputString + "INTO " + tableName);
 
 			ds.AcceptChanges();
 			OnUpdate();

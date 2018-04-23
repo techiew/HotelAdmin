@@ -25,7 +25,7 @@ namespace HotellAdmin {
         string flippedToDate;
         string listBoxItems;
 
-		bool loginRequired = false;
+		bool loginRequired = true;
 
 		List<Room> roomDataList;
 		List<Order> orderDataList;
