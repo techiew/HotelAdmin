@@ -50,16 +50,16 @@ namespace HotellAdmin {
 			if (DatabaseManager.connected == false) { ShowDatabaseErrorAndExit(); return; } 
 			if (loginRequired) RequestLogin();
 
-            this.Size = Properties.Settings.Default.FormSize;
-            colorBlindMode.Checked = Properties.Settings.Default.ColorBlind;
-			headerPictureBox.BackColor = Color.FromArgb(45, 48, 50);
-
             GetRoomData();
 			ShowRoomData(1);
 			GetOrderData();
 			ShowOrderData();
 			GetBookingData();
 			GetDropInData();
+
+			this.Size = Properties.Settings.Default.FormSize;
+			colorBlindMode.Checked = Properties.Settings.Default.ColorBlind;
+			headerPictureBox.BackColor = Color.FromArgb(45, 48, 50);
 
 			//Bare for å teste datagrid, ligger i innstillinger på formen
 			dataGridView1.DataSource = DatabaseManager.Query("SELECT * FROM rom ORDER BY romID ASC;");
