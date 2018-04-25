@@ -23,6 +23,7 @@
 		/// the contents of this method with the code editor.
 		/// </summary>
 		private void InitializeComponent() {
+			this.components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormHotellAdmin));
 			this.tabControl1 = new System.Windows.Forms.TabControl();
 			this.tabBooking = new System.Windows.Forms.TabPage();
@@ -73,11 +74,13 @@
 			this.dropInConfirm = new System.Windows.Forms.Button();
 			this.tabOptions = new System.Windows.Forms.TabPage();
 			this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-			this.colorBlindMode = new System.Windows.Forms.CheckBox();
 			this.dataGridView1 = new System.Windows.Forms.DataGridView();
-			this.headerPictureBox = new System.Windows.Forms.PictureBox();
 			this.panel1 = new System.Windows.Forms.Panel();
 			this.syncXMLNowButton = new System.Windows.Forms.Button();
+			this.colorBlindMode = new System.Windows.Forms.CheckBox();
+			this.headerPictureBox = new System.Windows.Forms.PictureBox();
+			this.iconDatabaseMode = new System.Windows.Forms.PictureBox();
+			this.tooltipDatabaseMode = new System.Windows.Forms.ToolTip(this.components);
 			this.tabControl1.SuspendLayout();
 			this.tabBooking.SuspendLayout();
 			this.tableLayoutBookingPanel.SuspendLayout();
@@ -95,8 +98,9 @@
 			this.tabOptions.SuspendLayout();
 			this.tableLayoutPanel1.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this.headerPictureBox)).BeginInit();
 			this.panel1.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this.headerPictureBox)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this.iconDatabaseMode)).BeginInit();
 			this.SuspendLayout();
 			// 
 			// tabControl1
@@ -577,27 +581,30 @@
 			// label3
 			// 
 			this.label3.AutoSize = true;
-			this.label3.Location = new System.Drawing.Point(18, 68);
+			this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.label3.Location = new System.Drawing.Point(17, 65);
 			this.label3.Name = "label3";
-			this.label3.Size = new System.Drawing.Size(57, 16);
+			this.label3.Size = new System.Drawing.Size(67, 20);
 			this.label3.TabIndex = 4;
 			this.label3.Text = "Fornavn";
 			// 
 			// label4
 			// 
 			this.label4.AutoSize = true;
-			this.label4.Location = new System.Drawing.Point(18, 8);
+			this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.label4.Location = new System.Drawing.Point(17, 4);
 			this.label4.Name = "label4";
-			this.label4.Size = new System.Drawing.Size(102, 16);
+			this.label4.Size = new System.Drawing.Size(120, 20);
 			this.label4.TabIndex = 5;
 			this.label4.Text = "Telefonnummer";
 			// 
 			// label2
 			// 
 			this.label2.AutoSize = true;
-			this.label2.Location = new System.Drawing.Point(279, 68);
+			this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.label2.Location = new System.Drawing.Point(278, 64);
 			this.label2.Name = "label2";
-			this.label2.Size = new System.Drawing.Size(64, 16);
+			this.label2.Size = new System.Drawing.Size(78, 20);
 			this.label2.TabIndex = 3;
 			this.label2.Text = "Etternavn";
 			// 
@@ -642,38 +649,38 @@
 			// toDateLabel
 			// 
 			this.toDateLabel.AutoSize = true;
-			this.toDateLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.toDateLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.toDateLabel.Location = new System.Drawing.Point(410, 7);
 			this.toDateLabel.Name = "toDateLabel";
-			this.toDateLabel.Size = new System.Drawing.Size(76, 24);
+			this.toDateLabel.Size = new System.Drawing.Size(64, 20);
 			this.toDateLabel.TabIndex = 7;
 			this.toDateLabel.Text = "Til dato:";
 			// 
 			// fromDateLabel
 			// 
 			this.fromDateLabel.AutoSize = true;
-			this.fromDateLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.fromDateLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.fromDateLabel.Location = new System.Drawing.Point(17, 9);
 			this.fromDateLabel.Name = "fromDateLabel";
-			this.fromDateLabel.Size = new System.Drawing.Size(84, 24);
+			this.fromDateLabel.Size = new System.Drawing.Size(73, 20);
 			this.fromDateLabel.TabIndex = 6;
 			this.fromDateLabel.Text = "Fra dato:";
 			// 
 			// dropInToDate
 			// 
-			this.dropInToDate.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.dropInToDate.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.dropInToDate.Location = new System.Drawing.Point(492, 3);
 			this.dropInToDate.Name = "dropInToDate";
-			this.dropInToDate.Size = new System.Drawing.Size(277, 29);
+			this.dropInToDate.Size = new System.Drawing.Size(273, 26);
 			this.dropInToDate.TabIndex = 2;
 			this.dropInToDate.TabStop = false;
 			// 
 			// dropInFromDate
 			// 
-			this.dropInFromDate.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.dropInFromDate.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.dropInFromDate.Location = new System.Drawing.Point(107, 4);
 			this.dropInFromDate.Name = "dropInFromDate";
-			this.dropInFromDate.Size = new System.Drawing.Size(281, 29);
+			this.dropInFromDate.Size = new System.Drawing.Size(281, 26);
 			this.dropInFromDate.TabIndex = 1;
 			this.dropInFromDate.TabStop = false;
 			// 
@@ -693,20 +700,20 @@
 			// roomTypeLabel
 			// 
 			this.roomTypeLabel.AutoSize = true;
-			this.roomTypeLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.roomTypeLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.roomTypeLabel.Location = new System.Drawing.Point(17, 6);
 			this.roomTypeLabel.Name = "roomTypeLabel";
-			this.roomTypeLabel.Size = new System.Drawing.Size(90, 24);
+			this.roomTypeLabel.Size = new System.Drawing.Size(77, 20);
 			this.roomTypeLabel.TabIndex = 2;
 			this.roomTypeLabel.Text = "Romtype:";
 			// 
 			// dropInComboBox
 			// 
-			this.dropInComboBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.dropInComboBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.dropInComboBox.FormattingEnabled = true;
 			this.dropInComboBox.Location = new System.Drawing.Point(107, 3);
 			this.dropInComboBox.Name = "dropInComboBox";
-			this.dropInComboBox.Size = new System.Drawing.Size(208, 32);
+			this.dropInComboBox.Size = new System.Drawing.Size(208, 28);
 			this.dropInComboBox.TabIndex = 0;
 			this.dropInComboBox.TabStop = false;
 			// 
@@ -808,17 +815,6 @@
 			this.tableLayoutPanel1.Size = new System.Drawing.Size(765, 475);
 			this.tableLayoutPanel1.TabIndex = 0;
 			// 
-			// colorBlindMode
-			// 
-			this.colorBlindMode.AutoSize = true;
-			this.colorBlindMode.Location = new System.Drawing.Point(13, 19);
-			this.colorBlindMode.Name = "colorBlindMode";
-			this.colorBlindMode.Size = new System.Drawing.Size(136, 20);
-			this.colorBlindMode.TabIndex = 1;
-			this.colorBlindMode.Text = "Fargeblind Modus";
-			this.colorBlindMode.UseVisualStyleBackColor = true;
-			this.colorBlindMode.CheckedChanged += new System.EventHandler(this.colorBlindMode_CheckedChanged);
-			// 
 			// dataGridView1
 			// 
 			this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
@@ -826,20 +822,6 @@
 			this.dataGridView1.Name = "dataGridView1";
 			this.dataGridView1.Size = new System.Drawing.Size(376, 232);
 			this.dataGridView1.TabIndex = 2;
-			// 
-			// headerPictureBox
-			// 
-			this.headerPictureBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.headerPictureBox.BackColor = System.Drawing.SystemColors.ActiveCaptionText;
-			this.headerPictureBox.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-			this.headerPictureBox.Image = ((System.Drawing.Image)(resources.GetObject("headerPictureBox.Image")));
-			this.headerPictureBox.InitialImage = null;
-			this.headerPictureBox.Location = new System.Drawing.Point(0, 0);
-			this.headerPictureBox.Name = "headerPictureBox";
-			this.headerPictureBox.Size = new System.Drawing.Size(950, 62);
-			this.headerPictureBox.TabIndex = 2;
-			this.headerPictureBox.TabStop = false;
 			// 
 			// panel1
 			// 
@@ -860,11 +842,50 @@
 			this.syncXMLNowButton.UseVisualStyleBackColor = true;
 			this.syncXMLNowButton.Click += new System.EventHandler(this.syncXMLNowButton_Click);
 			// 
+			// colorBlindMode
+			// 
+			this.colorBlindMode.AutoSize = true;
+			this.colorBlindMode.Location = new System.Drawing.Point(13, 19);
+			this.colorBlindMode.Name = "colorBlindMode";
+			this.colorBlindMode.Size = new System.Drawing.Size(136, 20);
+			this.colorBlindMode.TabIndex = 1;
+			this.colorBlindMode.Text = "Fargeblind Modus";
+			this.colorBlindMode.UseVisualStyleBackColor = true;
+			this.colorBlindMode.CheckedChanged += new System.EventHandler(this.colorBlindMode_CheckedChanged);
+			// 
+			// headerPictureBox
+			// 
+			this.headerPictureBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.headerPictureBox.BackColor = System.Drawing.SystemColors.ActiveCaptionText;
+			this.headerPictureBox.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+			this.headerPictureBox.Image = ((System.Drawing.Image)(resources.GetObject("headerPictureBox.Image")));
+			this.headerPictureBox.InitialImage = null;
+			this.headerPictureBox.Location = new System.Drawing.Point(0, 0);
+			this.headerPictureBox.Name = "headerPictureBox";
+			this.headerPictureBox.Size = new System.Drawing.Size(950, 62);
+			this.headerPictureBox.TabIndex = 2;
+			this.headerPictureBox.TabStop = false;
+			// 
+			// iconDatabaseMode
+			// 
+			this.iconDatabaseMode.BackColor = System.Drawing.Color.Red;
+			this.iconDatabaseMode.Location = new System.Drawing.Point(853, 65);
+			this.iconDatabaseMode.Name = "iconDatabaseMode";
+			this.iconDatabaseMode.Size = new System.Drawing.Size(79, 22);
+			this.iconDatabaseMode.TabIndex = 3;
+			this.iconDatabaseMode.TabStop = false;
+			// 
+			// tooltipDatabaseMode
+			// 
+			this.tooltipDatabaseMode.ToolTipTitle = "Offline modus";
+			// 
 			// FormHotellAdmin
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(948, 605);
+			this.Controls.Add(this.iconDatabaseMode);
 			this.Controls.Add(this.headerPictureBox);
 			this.Controls.Add(this.tabControl1);
 			this.DataBindings.Add(new System.Windows.Forms.Binding("Location", global::HotellAdmin.Properties.Settings.Default, "Location", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
@@ -896,9 +917,10 @@
 			this.tabOptions.ResumeLayout(false);
 			this.tableLayoutPanel1.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(this.headerPictureBox)).EndInit();
 			this.panel1.ResumeLayout(false);
 			this.panel1.PerformLayout();
+			((System.ComponentModel.ISupportInitialize)(this.headerPictureBox)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this.iconDatabaseMode)).EndInit();
 			this.ResumeLayout(false);
 
 		}
@@ -959,6 +981,8 @@
 		private System.Windows.Forms.DataGridView dataGridView1;
 		private System.Windows.Forms.Panel panel1;
 		private System.Windows.Forms.Button syncXMLNowButton;
+		private System.Windows.Forms.PictureBox iconDatabaseMode;
+		private System.Windows.Forms.ToolTip tooltipDatabaseMode;
 	}
 }
 

@@ -5,15 +5,17 @@ using System.Text;
 using System.Threading.Tasks;
 using MySql.Data.MySqlClient;
 using System.Data;
+using System.Windows.Forms;
 
 namespace HotellAdmin {
 
 	static class DatabaseManager {
 
-		private static MySqlConnection conn = null;
-		public static bool connected = false;
-		public static bool autoSyncXML = true;
-		public static bool isLocal = false;
+		public static bool initialized = false;
+		public static bool connected;
+		public static bool autoSyncXML;
+		public static bool usingLocalDatabase;
+		private static MySqlConnection conn;
 		public static DataSet ds;
 		public static DataTable employeesTable;
 		public static DataTable ordersTable;
@@ -26,10 +28,18 @@ namespace HotellAdmin {
 		public static MySqlDataAdapter daRoom;
 		public static MySqlDataAdapter daRoomTypes;
 
-		public static void FillDataSet() {
+		public static void Init() {
+			if (initialized) return;
+			initialized = true;
+			conn = null;
+			connected = false;
+			autoSyncXML = true;
+			usingLocalDatabase = false;
 			ds = new DataSet();
 			ds.DataSetName = "HotellAdmin";
+		}
 
+		public static void FillDataSet() {
 			daEmployees = new MySqlDataAdapter("SELECT * FROM ansatte", conn);
 			daOrders = new MySqlDataAdapter("SELECT * FROM bestillinger", conn);
 			daBooking = new MySqlDataAdapter("SELECT * FROM booking", conn);
@@ -100,7 +110,7 @@ namespace HotellAdmin {
 
 		}
 
-		public static DataSet Query(string sql) {
+		public static DataSet Query(string sql) { // ikke bruk denne, husk å lag replacement for konto-sjekking i login vinduet
 
 			if (conn == null || conn.State == ConnectionState.Closed) {
 				Console.WriteLine("Query: Ingen database er tilkoblet");
@@ -250,6 +260,22 @@ namespace HotellAdmin {
 		public static void SyncXML() {
 			ds.WriteXml("hotelladmin_database.xml");
 			ds.WriteXmlSchema("hotelladmin_schema.xml");
+		}
+
+		public static void OpenLocalDatabase() {
+
+			if (usingLocalDatabase) return;
+
+			if (connected) {
+				conn.Close();
+				connected = false;
+			}
+
+			ds.Clear();
+			ds.ReadXmlSchema("hotelladmin_schema.xml");
+			ds.ReadXml("hotelladmin_database.xml");
+			usingLocalDatabase = true;
+
 		}
 
 	}

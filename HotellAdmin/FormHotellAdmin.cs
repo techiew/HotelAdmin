@@ -47,7 +47,7 @@ namespace HotellAdmin {
 		private void FormHotellAdmin_Load(object sender, EventArgs e) {
 
 			OpenDatabase();
-			if (DatabaseManager.connected == false) { ShowDatabaseErrorAndExit(); return; } 
+			while (!DatabaseManager.connected && !DatabaseManager.usingLocalDatabase) { ShowDatabaseError(); } // denne må stoppe resten av programmet hvis det er noe gærnt
 			if (loginRequired) RequestLogin();
 
             GetRoomData();
@@ -87,6 +87,7 @@ namespace HotellAdmin {
 
         private void OpenDatabase() {
 			//string db = @"server=46.9.246.190;database=hotell;port=24440;userid=admin;password=admin;";
+			DatabaseManager.Init();
 			DatabaseManager.Open("46.9.246.190", "24440", "hotell", "admin", "admin");
 		}
 
@@ -239,10 +240,20 @@ namespace HotellAdmin {
 			// vis popup vindu med error
 		}
 
-		private void ShowDatabaseErrorAndExit() {
-			MessageBox.Show("Kunne ikke koble til databasen, prøv på nytt.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-			Console.WriteLine("Kunne ikke koble til databasen, prøv på nytt.");
-			this.Close();
+		private void ShowDatabaseError() {
+			DatabaseErrorWindow dew = new DatabaseErrorWindow();
+			var result = dew.ShowDialog();
+
+			if (result == DialogResult.Cancel) {
+				this.Close();
+				Environment.Exit(0);
+			} else if (result == DialogResult.OK) {
+				DatabaseManager.OpenLocalDatabase();
+				Console.WriteLine("Bruker nå lokal database");
+			} else if (result == DialogResult.Retry) {
+				OpenDatabase();
+			}
+
 		}
 
 		private void RequestLogin() {
@@ -251,6 +262,7 @@ namespace HotellAdmin {
 
 			if (result == DialogResult.Abort) {
 				this.Close();
+				Environment.Exit(0);
 			} else if (result == DialogResult.OK) {
 				Console.WriteLine("Innlogging godkjent.");
 			}
