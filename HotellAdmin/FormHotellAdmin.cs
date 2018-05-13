@@ -24,7 +24,6 @@ namespace HotellAdmin {
 		string flippedFromDate;
         string flippedToDate;
         string listBoxItems;
-
 		bool loginRequired = true;
 
 		List<Room> roomDataList;
@@ -40,6 +39,9 @@ namespace HotellAdmin {
 		Color roomClosed = Color.FromArgb(255, 99, 71); //176 23 31
 		Color roomWrongType = Color.FromArgb(255, 255, 150);
 
+		Bitmap statusOnline = new Bitmap(Properties.Resources.status_online);
+		Bitmap statusOffline = new Bitmap(Properties.Resources.status_offline);
+
 		public FormHotellAdmin() {
 			InitializeComponent();
         }
@@ -47,7 +49,6 @@ namespace HotellAdmin {
 		private void FormHotellAdmin_Load(object sender, EventArgs e) {
 
 			OpenDatabase();
-			while (!DatabaseManager.connected && !DatabaseManager.usingLocalDatabase) { ShowDatabaseError(); } // denne må stoppe resten av programmet hvis det er noe gærnt
 			if (loginRequired) RequestLogin();
 
             GetRoomData();
@@ -57,15 +58,11 @@ namespace HotellAdmin {
 			GetBookingData();
 			GetDropInData();
 
-			this.Size = Properties.Settings.Default.FormSize;
+			Size = Properties.Settings.Default.FormSize;
 			colorBlindMode.Checked = Properties.Settings.Default.ColorBlind;
 			headerPictureBox.BackColor = Color.FromArgb(45, 48, 50);
 
-			//Bare for å teste datagrid, ligger i innstillinger på formen
-			dataGridView1.DataSource = DatabaseManager.Query("SELECT * FROM rom ORDER BY romID ASC;");
-			dataGridView1.DataMember = "result";
-
-			// Disse stopper ekstrem lag og CPU usage når vi resizer
+			// Disse stopper ekstrem lag og prossessorbruk når vi resizer vinduet
 			ResizeBegin += new EventHandler(FormHotellAdmin_ResizeBegin);
 			ResizeEnd += new EventHandler(FormHotellAdmin_ResizeEnd);
 
@@ -78,7 +75,6 @@ namespace HotellAdmin {
 			buttonSecondFloor.MouseDown += new MouseEventHandler(buttonSecondFloor_MouseDown);
 			buttonThirdFloor.MouseDown += new MouseEventHandler(buttonThirdFloor_MouseDown);
 
-            //La denne loopen ligge under de andre, tror det gjør slik at denne eventen blir triggera sist, og det er viktig
             foreach (Control c in tableLayoutFloorButtons.Controls.OfType<Button>()) {
 				c.MouseDown += new MouseEventHandler(buttons_MouseDown);
             }
@@ -87,16 +83,17 @@ namespace HotellAdmin {
 
         private void OpenDatabase() {
 			//string db = @"server=46.9.246.190;database=hotell;port=24440;userid=admin;password=admin;";
-			DatabaseManager.Init();
+			DatabaseManager.Init(this);
 			DatabaseManager.Open("46.9.246.190", "24440", "hotell", "admin", "admin");
+
+			while (!DatabaseManager.IsConnected() && !DatabaseManager.IsUsingLocalDatabase()) {
+				ShowDatabaseError();
+			}
+
 		}
 
 		private void GetRoomData() {
 			roomDataList = rd.GetData();
-			//if (roomDataList.Count != (floors * roomsPerFloor)) {
-			//	ShowError("Feil med romdata."); // midlertidig feilhåndtering, burde endres?
-			//} 
-
 		}
 
 		private void ShowRoomData(int floor) {
@@ -182,13 +179,21 @@ namespace HotellAdmin {
 
 		private void GetBookingData() {
 			bookingDataList = bd.GetData();
-			//Console.WriteLine(BookingData.IsRoomOccupiedForPeriod(3, "2018-08-26", "2018-08-28"));
-			//List<Room> availableRooms = BookingData.GetAvailableRoomsForPeriod("2018-08-22", "2018-08-25");
-			//Console.WriteLine("Gyldige rom:");
-			//for(int i = 0; i < availableRooms.Count; i++) {
-			//	Console.WriteLine(availableRooms[i].number);
-			//}
+		}
 
+		private void GetDropInData() {
+			DataRow[] result = DatabaseManager.SelectFromTable("romtyper", "romtype <> 'xdxdxdxd'");
+			//DatabaseManager.Query("SELECT romtype FROM romtyper;"); // TODO: må fikse han karen her, funker ikke i offline modus
+			string roomType;
+
+			if (result == null) return;
+
+			foreach (DataRow row in result) {
+				roomType = (string)row["romtype"];
+				dropInComboBox.Items.Add(CultureInfo.CurrentCulture.TextInfo.ToTitleCase(roomType.ToLower()));
+			}
+
+			dropInComboBox.SelectedIndex = 0;
 		}
 
 		private void ShowRoomsForToday() {
@@ -211,36 +216,7 @@ namespace HotellAdmin {
 			ShowRoomData(selectedFloor);
 		}
 
-		private void GetDropInData() {
-            DataSet result = DatabaseManager.Query("SELECT romtype FROM romtyper;"); // TODO: må fikse han karen her, funker ikke i offline modus
-            string roomType;
-
-			if (result == null) return;
-
-			foreach (DataRow row in result.Tables["result"].Rows) {
-				roomType = (string)row["romtype"];
-				dropInComboBox.Items.Add(CultureInfo.CurrentCulture.TextInfo.ToTitleCase(roomType.ToLower()));
-			}
-
-			dropInComboBox.SelectedIndex = 0;
-        }
-
-		private void SyncOnDatabaseUpdate() {
-			// TODO ?
-			// Sync XML med database når en oppdatering skjer fra programmet vårt
-			// Kanskje bruke DatabaseManager til å synce med xml
-		}
-
-		private void ShowLoadingBox() {
-			// Vis en boks som feedback at programmet henter data?
-		}
-
-		private void ShowError(string errorMsg) {
-			// TODO
-			// vis popup vindu med error
-		}
-
-		private void ShowDatabaseError() {
+		public void ShowDatabaseError() {
 			DatabaseErrorWindow dew = new DatabaseErrorWindow();
 			var result = dew.ShowDialog();
 
@@ -252,6 +228,22 @@ namespace HotellAdmin {
 				Console.WriteLine("Bruker nå lokal database");
 			} else if (result == DialogResult.Retry) {
 				OpenDatabase();
+			}
+
+		}
+
+		public void UpdateDatabaseStatus(bool status) {
+
+			if (status) {
+				iconDatabaseStatus.Image = statusOnline;
+				labelDatabaseStatus.Text = "Online";
+				optionLabelDatabaseStatus.Text = "Online database er tilkoblet.";
+				changeDatabaseStatusButton.Text = "Bruk offline database (XML)";
+			} else {
+				iconDatabaseStatus.Image = statusOffline;
+				labelDatabaseStatus.Text = "Offline";
+				optionLabelDatabaseStatus.Text = "Offline databasen er i bruk.";
+				changeDatabaseStatusButton.Text = "Koble til online databasen";
 			}
 
 		}
@@ -376,8 +368,6 @@ namespace HotellAdmin {
 
         private void labels_DragDrop(object sender, DragEventArgs e) {
 
-			// sjekk denne - https://stackoverflow.com/questions/3240603/c-sharp-drag-and-drop-show-the-dragged-item-while-dragging    nei takk
-			// jo, det skal vi mekke
 			if (e.Data.GetDataPresent(DataFormats.StringFormat)) {
                 string labelString = (sender as Label).Text;
                 string[] splitLabelString = labelString.Split('\n'); //Splitter opp de tre linjene stringFromLabel hadde
@@ -394,14 +384,14 @@ namespace HotellAdmin {
                 if (roomDataList[roomID].wrongRoomType == false) {
 
 					if (roomDataList[roomID].assigned == false) {
-						DataRow row = DatabaseManager.bookingTable.NewRow();
+						DataRow row = DatabaseManager.GetRowWithSchema("booking");
 						row["romID"] = roomID;
 						row["bestillingID"] = orderID;
 						row["fradato"] = flippedFromDate;
 						row["tildato"] = flippedToDate;
 						DatabaseManager.InsertRow("booking", row);
 
-						row = DatabaseManager.ordersTable.Rows.Find(orderID);
+						row = DatabaseManager.FindRowInTable("bestillinger", orderID);
 						row["tildelt"] = "true";
 						DatabaseManager.UpdateRow("bestillinger", orderID.ToString(), row);
 
@@ -446,7 +436,7 @@ namespace HotellAdmin {
             string tlf = dropInPhoneNumber.Text;
             string firstName = dropInFirstname.Text;
             string lastName = dropInLastname.Text;
-			DataRow row = DatabaseManager.ordersTable.NewRow();
+			DataRow row = DatabaseManager.GetRowWithSchema("bestillinger");
 			row["romtype"] = roomType;
 			row["fradato"] = fromDate;
 			row["tildato"] = toDate;
@@ -488,11 +478,20 @@ namespace HotellAdmin {
             ShowRoomData(1);
         }
 
-        private void FormHotellAdmin_FormClosing(object sender, FormClosingEventArgs e) {
-            Properties.Settings.Default.FormSize = this.Size;
-            Properties.Settings.Default.Location = this.Location;
-            Properties.Settings.Default.Save();
-        }
+		private void changeDatabaseStatusButton_Click(object sender, EventArgs e) {
+
+			if (DatabaseManager.IsUsingLocalDatabase()) {
+				OpenDatabase();
+			} else {
+				DatabaseManager.OpenLocalDatabase();
+			}
+		}
+
+		private void FormHotellAdmin_FormClosing(object sender, FormClosingEventArgs e) {
+			Properties.Settings.Default.FormSize = this.Size;
+			Properties.Settings.Default.Location = this.Location;
+			Properties.Settings.Default.Save();
+		}
 
 		private void FormHotellAdmin_ResizeBegin(Object sender, EventArgs e) {
 			SuspendLayout();
@@ -500,10 +499,6 @@ namespace HotellAdmin {
 
 		private void FormHotellAdmin_ResizeEnd(Object sender, EventArgs e) {
 			ResumeLayout();
-		}
-
-		private void syncXMLNowButton_Click(object sender, EventArgs e) {
-			DatabaseManager.SyncXML();
 		}
 
 	}

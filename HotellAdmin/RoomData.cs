@@ -11,7 +11,7 @@ namespace HotellAdmin {
 
 		public List<Room> GetData() {
 
-			DataTable result = DatabaseManager.ds.Tables["rom"];
+			DataTable result = DatabaseManager.GetTable("rom");
 
 			if(result == null) {
 				Console.WriteLine("RoomData.GetData: DataTable er tomt");

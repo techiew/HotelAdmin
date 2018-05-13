@@ -6,40 +6,47 @@ using System.Threading.Tasks;
 using MySql.Data.MySqlClient;
 using System.Data;
 using System.Windows.Forms;
+using System.IO;
 
 namespace HotellAdmin {
 
 	static class DatabaseManager {
 
-		public static bool initialized = false;
-		public static bool connected;
-		public static bool autoSyncXML;
-		public static bool usingLocalDatabase;
+	    private static bool initialized = false;
+		private static bool connected;
+		private static bool usingLocalDatabase;
 		private static MySqlConnection conn;
-		public static DataSet ds;
-		public static DataTable employeesTable;
-		public static DataTable ordersTable;
-		public static DataTable bookingTable;
-		public static DataTable roomTable;
-		public static DataTable roomTypesTable;
-		public static MySqlDataAdapter daEmployees;
-		public static MySqlDataAdapter daOrders;
-		public static MySqlDataAdapter daBooking;
-		public static MySqlDataAdapter daRoom;
-		public static MySqlDataAdapter daRoomTypes;
+		private static DataSet ds;
+		private static DataTable employeesTable;
+		private static DataTable ordersTable;
+		private static DataTable bookingTable;
+		private static DataTable roomTable;
+		private static DataTable roomTypesTable;
+		private static MySqlDataAdapter da;
+		private static MySqlDataAdapter daEmployees;
+		private static MySqlDataAdapter daOrders;
+		private static MySqlDataAdapter daBooking;
+		private static MySqlDataAdapter daRoom;
+		private static MySqlDataAdapter daRoomTypes;
+		private static FormHotellAdmin gui;
 
-		public static void Init() {
+		public static void Init(FormHotellAdmin gui) {
 			if (initialized) return;
 			initialized = true;
 			conn = null;
 			connected = false;
-			autoSyncXML = true;
 			usingLocalDatabase = false;
 			ds = new DataSet();
 			ds.DataSetName = "HotellAdmin";
+			DatabaseManager.gui = gui;
 		}
 
-		public static void FillDataSet() {
+		private static void FillDataSet() {
+
+			if (!initialized) return;
+
+			ds.Clear();
+
 			daEmployees = new MySqlDataAdapter("SELECT * FROM ansatte", conn);
 			daOrders = new MySqlDataAdapter("SELECT * FROM bestillinger", conn);
 			daBooking = new MySqlDataAdapter("SELECT * FROM booking", conn);
@@ -73,6 +80,8 @@ namespace HotellAdmin {
 
 		public static void Open(string server, string port, string database, string username, string password) {
 
+			if (!initialized) return;
+
 			if (conn != null) {
 
 				if (conn.State == ConnectionState.Open) {
@@ -87,10 +96,16 @@ namespace HotellAdmin {
 
 			try {
 				conn = new MySqlConnection(connectionString);
+				conn.StateChange -= new StateChangeEventHandler(OnStateChange);
+				conn.StateChange += new StateChangeEventHandler(OnStateChange);
 				conn.Open();
 				FillDataSet();
-				Console.WriteLine("Open: Koblet til database. MySQL versjon: {0}", conn.ServerVersion);
+				MergeLocalAndExternalDatabase();
+				usingLocalDatabase = false;
 				connected = true;
+
+				Console.WriteLine("Open: Koblet til database. MySQL versjon: {0}", conn.ServerVersion);
+
 			} catch (MySqlException ex) {
 				connected = false;
 				Console.WriteLine("Error: {0}", ex.ToString());
@@ -98,7 +113,38 @@ namespace HotellAdmin {
 
 		}
 
+		public static void OpenLocalDatabase() {
+
+			if (!File.Exists("hotelladmin_database.xml")) {
+				Console.WriteLine("Database XML filen eksisterer ikke");
+				return;
+			} else if(!File.Exists("hotelladmin_schema.xml")) {
+				Console.WriteLine("Database skjema filen eksisterer ikke");
+				return;
+			}
+
+			if (usingLocalDatabase || !initialized) return;
+
+			if (connected) {
+				conn.Close();
+				connected = false;
+			}
+
+			ds.Clear();
+			ds.ReadXmlSchema("hotelladmin_schema.xml");
+			ds.ReadXml("hotelladmin_database.xml");
+			usingLocalDatabase = true;
+
+			employeesTable = ds.Tables["ansatte"];
+			ordersTable = ds.Tables["bestillinger"];
+			bookingTable = ds.Tables["booking"];
+			roomTable = ds.Tables["rom"];
+			roomTypesTable = ds.Tables["romtyper"];
+		}
+
 		public static void Close() {
+
+			if (!initialized) return;
 
 			if (conn.State == ConnectionState.Open) {
 				conn.Close();
@@ -110,27 +156,63 @@ namespace HotellAdmin {
 
 		}
 
-		public static DataSet Query(string sql) { // ikke bruk denne, husk å lag replacement for konto-sjekking i login vinduet
+		private static void MergeLocalAndExternalDatabase() {
+			DataSet local = new DataSet("local");
+			bool schemaExists = File.Exists("hotelladmin_schema.xml");
+			bool xmlExists = File.Exists("hotelladmin_database.xml");
 
-			if (conn == null || conn.State == ConnectionState.Closed) {
-				Console.WriteLine("Query: Ingen database er tilkoblet");
-				return null;
+			if (schemaExists) {
+				local.ReadXmlSchema("hotelladmin_schema.xml");
 			}
 
-			MySqlCommand cmd = new MySqlCommand(sql, conn);
-			MySqlDataAdapter da = new MySqlDataAdapter(cmd);
-			MySqlCommandBuilder cb = new MySqlCommandBuilder(da);
-			DataSet qds = new DataSet("result");
-			da.Fill(qds, "result");
+			if (xmlExists) {
+				local.ReadXml("hotelladmin_database.xml");
+			}
 
-			Console.WriteLine(sql);
+			if(xmlExists && schemaExists) {
+				ds.Merge(local, false, MissingSchemaAction.Add);
+				ds.AcceptChanges();
+				MySqlCommandBuilder cbe = new MySqlCommandBuilder(daEmployees);
+				daEmployees.Update(ds, "ansatte");
+				MySqlCommandBuilder cbrt = new MySqlCommandBuilder(daRoomTypes);
+				daRoomTypes.Update(ds, "romtyper");
+				MySqlCommandBuilder cbr = new MySqlCommandBuilder(daRoom);
+				daRoom.Update(ds, "rom");
+				MySqlCommandBuilder cbo = new MySqlCommandBuilder(daOrders);
+				daOrders.Update(ds, "bestillinger");
+				MySqlCommandBuilder cbb = new MySqlCommandBuilder(daBooking);
+				daBooking.Update(ds, "booking");
+			}
 
-			return qds;
+			ds.WriteXml("hotelladmin_database.xml");
+			ds.WriteXmlSchema("hotelladmin_schema.xml");
 		}
 
-		public static void InsertRow(string tableName, DataRow rowData) {
+		//public static DataSet Query(string sql) { // ikke bruk denne
 
-			if(tableName == "booking") {
+		//	if (!initialized) return null;
+
+		//	if (conn == null || conn.State == ConnectionState.Closed) {
+		//		Console.WriteLine("Query: Ingen database er tilkoblet");
+		//		return null;
+		//	}
+
+		//	MySqlCommand cmd = new MySqlCommand(sql, conn);
+		//	MySqlDataAdapter da = new MySqlDataAdapter(cmd);
+		//	MySqlCommandBuilder cb = new MySqlCommandBuilder(da);
+		//	DataSet qds = new DataSet("result");
+		//	da.Fill(qds, "result");
+
+		//	Console.WriteLine(sql);
+
+		//	return qds;
+		//}
+
+		public static bool InsertRow(string tableName, DataRow rowData) {
+
+			if (!initialized || (!usingLocalDatabase && !CheckConnection())) return false;
+
+			if (tableName == "booking") {
 				DataRow newRow = bookingTable.NewRow();
 				newRow[0] = rowData[0];
 				newRow[1] = rowData[1];
@@ -138,8 +220,11 @@ namespace HotellAdmin {
 				newRow[3] = rowData[3];
 				newRow[4] = rowData[4];
 				bookingTable.Rows.Add(newRow);
-				MySqlCommandBuilder cb = new MySqlCommandBuilder(daBooking);
-				daBooking.Update(ds, "booking");
+
+				if (!usingLocalDatabase) {
+					MySqlCommandBuilder cb = new MySqlCommandBuilder(daBooking);
+					daBooking.Update(ds, "booking");
+				}
 
 			} else if (tableName == "ansatte") {
 				DataRow newRow = employeesTable.NewRow();
@@ -149,8 +234,11 @@ namespace HotellAdmin {
 				newRow[3] = rowData[3];
 				newRow[4] = rowData[4];
 				employeesTable.Rows.Add(newRow);
-				MySqlCommandBuilder cb = new MySqlCommandBuilder(daEmployees);
-				daEmployees.Update(ds, "ansatte");
+
+				if (!usingLocalDatabase) {
+					MySqlCommandBuilder cb = new MySqlCommandBuilder(daEmployees);
+					daEmployees.Update(ds, "ansatte");
+				}
 
 			} else if (tableName == "bestillinger") {
 				DataRow newRow = ordersTable.NewRow();
@@ -163,16 +251,22 @@ namespace HotellAdmin {
 				newRow[6] = rowData[6];
 				newRow[7] = rowData[7];
 				ordersTable.Rows.Add(newRow);
-				MySqlCommandBuilder cb = new MySqlCommandBuilder(daOrders);
-				daOrders.Update(ds, "bestillinger");
+
+				if (!usingLocalDatabase) {
+					MySqlCommandBuilder cb = new MySqlCommandBuilder(daOrders);
+					daOrders.Update(ds, "bestillinger");
+				}
 
 			} else if (tableName == "rom") {
 				DataRow newRow = roomTable.NewRow();
 				newRow[0] = rowData[0];
 				newRow[1] = rowData[1];
 				roomTable.Rows.Add(newRow);
-				MySqlCommandBuilder cb = new MySqlCommandBuilder(daRoom);
-				daRoom.Update(ds, "rom");
+
+				if (!usingLocalDatabase) {
+					MySqlCommandBuilder cb = new MySqlCommandBuilder(daRoom);
+					daRoom.Update(ds, "rom");
+				}
 
 			} else if (tableName == "romtyper") {
 				DataRow newRow = roomTypesTable.NewRow();
@@ -180,8 +274,12 @@ namespace HotellAdmin {
 				newRow[1] = rowData[1];
 				newRow[2] = rowData[2];
 				roomTypesTable.Rows.Add(newRow);
-				MySqlCommandBuilder cb = new MySqlCommandBuilder(daRoomTypes);
-				daRoomTypes.Update(ds, "romtyper");
+
+				if (!usingLocalDatabase) {
+					MySqlCommandBuilder cb = new MySqlCommandBuilder(daRoomTypes);
+					daRoomTypes.Update(ds, "romtyper");
+				}
+
 			}
 
 			string outputString = "";
@@ -192,9 +290,13 @@ namespace HotellAdmin {
 
 			ds.AcceptChanges();
 			OnUpdate();
+
+			return true;
 		}
 
-		public static void UpdateRow(string tableName, string primaryKey, DataRow rowData) {
+		public static bool UpdateRow(string tableName, string primaryKey, DataRow rowData) {
+
+			if (!initialized || (!usingLocalDatabase && !CheckConnection())) return false;
 
 			DataRow selectedRow = null;
 
@@ -203,79 +305,152 @@ namespace HotellAdmin {
 				selectedRow.BeginEdit();
 				selectedRow = rowData;
 				selectedRow.EndEdit();
-				MySqlCommandBuilder cb = new MySqlCommandBuilder(daBooking);
-				daBooking.Update(ds, "booking");
+
+				if (!usingLocalDatabase) {
+					MySqlCommandBuilder cb = new MySqlCommandBuilder(daBooking);
+					daBooking.Update(ds, "booking");
+				}
 
 			} else if (tableName == "ansatte") {
 				selectedRow = employeesTable.Rows.Find(primaryKey);
 				selectedRow.BeginEdit();
 				selectedRow = rowData;
 				selectedRow.EndEdit();
-				MySqlCommandBuilder cb = new MySqlCommandBuilder(daEmployees);
-				daEmployees.Update(ds, "ansatte");
+
+				if (!usingLocalDatabase) {
+					MySqlCommandBuilder cb = new MySqlCommandBuilder(daEmployees);
+					daEmployees.Update(ds, "ansatte");
+				}
 
 			} else if (tableName == "bestillinger") {
 				selectedRow = ordersTable.Rows.Find(primaryKey);
 				selectedRow.BeginEdit();
 				selectedRow = rowData;
 				selectedRow.EndEdit();
-				MySqlCommandBuilder cb = new MySqlCommandBuilder(daOrders);
-				daOrders.Update(ds, "bestillinger");
+
+				if (!usingLocalDatabase) {
+					MySqlCommandBuilder cb = new MySqlCommandBuilder(daOrders);
+					daOrders.Update(ds, "bestillinger");
+				}
 
 			} else if (tableName == "rom") {
 				selectedRow = roomTable.Rows.Find(primaryKey);
 				selectedRow.BeginEdit();
 				selectedRow = rowData;
 				selectedRow.EndEdit();
-				MySqlCommandBuilder cb = new MySqlCommandBuilder(daRoom);
-				daRoom.Update(ds, "rom");
+
+				if (!usingLocalDatabase) {
+					MySqlCommandBuilder cb = new MySqlCommandBuilder(daRoom);
+					daRoom.Update(ds, "rom");
+				}
 
 			} else if (tableName == "romtyper") {
 				selectedRow = roomTypesTable.Rows.Find(primaryKey);
 				selectedRow.BeginEdit();
 				selectedRow = rowData;
 				selectedRow.EndEdit();
-				MySqlCommandBuilder cb = new MySqlCommandBuilder(daRoomTypes);
-				daRoomTypes.Update(ds, "romtyper");
+
+				if (!usingLocalDatabase) {
+					MySqlCommandBuilder cb = new MySqlCommandBuilder(daRoomTypes);
+					daRoomTypes.Update(ds, "romtyper");
+				}
+
 			}
 
 			string outputString = "";
+
 			for (int i = 0; i < rowData.ItemArray.Length; i++) {
 				outputString += rowData[i].ToString() + ", ";
 			}
+
 			Console.WriteLine("UPDATE: " + outputString + "INTO " + tableName);
 
 			ds.AcceptChanges();
 			OnUpdate();
+
+			return true;
 		}
 
-		public static void OnUpdate() {
+		public static DataRow FindRowInTable(string tableName, int primaryKey) {
+			return ds.Tables[tableName].Rows.Find(primaryKey);
+		}
 
-			if (!autoSyncXML) return;
+		public static int CountRowsWithCondition(string tableName, string condition) {
+			return ds.Tables[tableName].Select(condition).Length;
+		}
+
+		public static DataRow[] SelectFromTable(string tableName, string condition) {
+			return ds.Tables[tableName].Select(condition);
+		}
+
+		private static void OnUpdate() {
+
+			if (!initialized) return;
 
 			ds.WriteXml("hotelladmin_database.xml");
 			ds.WriteXmlSchema("hotelladmin_schema.xml");
+		}
+
+		private static void OnStateChange(object sender, StateChangeEventArgs e) {
+
+			if (e.CurrentState == ConnectionState.Open) {
+				gui.UpdateDatabaseStatus(true);
+			} else if (e.CurrentState == ConnectionState.Closed || e.CurrentState == ConnectionState.Broken) {
+				gui.UpdateDatabaseStatus(false);
+			}
+
+		}
+
+		private static bool CheckConnection() {
+
+			if(conn == null || !initialized || conn.State == (ConnectionState.Closed | ConnectionState.Broken)) {
+				connected = false;
+				return false;
+			}
+
+			MySqlConnection connTest = conn;
+			
+			try {
+				connTest.Close();
+				connTest.Open();
+			} catch (MySqlException e) {
+				connected = false;
+				Console.WriteLine("Tilkoblingen til databasen ble brutt.");
+				gui.ShowDatabaseError();
+				return false;
+			}
+
+			return true;
 		}
 
 		public static void SyncXML() {
+
+			if (!initialized) return;
+
 			ds.WriteXml("hotelladmin_database.xml");
 			ds.WriteXmlSchema("hotelladmin_schema.xml");
 		}
 
-		public static void OpenLocalDatabase() {
+		// Getters & setters ------------------------------------
 
-			if (usingLocalDatabase) return;
+		public static DataRow GetRowWithSchema(string tableName) {
+			return ds.Tables[tableName].NewRow();
+		}
 
-			if (connected) {
-				conn.Close();
-				connected = false;
-			}
+		public static DataTable GetTable(string tableName) {
+			return ds.Tables[tableName];
+		}
 
-			ds.Clear();
-			ds.ReadXmlSchema("hotelladmin_schema.xml");
-			ds.ReadXml("hotelladmin_database.xml");
-			usingLocalDatabase = true;
+		public static bool IsInitialized() {
+			return initialized;
+		}
 
+		public static bool IsConnected() {
+			return connected;
+		}
+
+		public static bool IsUsingLocalDatabase() {
+			return usingLocalDatabase;
 		}
 
 	}

@@ -48,7 +48,7 @@ namespace HotellAdmin {
 
 			if (username == "admin" && password == "admin") return true;
 
-			if(!DatabaseManager.connected && !DatabaseManager.usingLocalDatabase) {
+			if(!DatabaseManager.IsConnected() && !DatabaseManager.IsUsingLocalDatabase()) {
 				Console.WriteLine("Kan ikke logge inn når en database ikke er tilkoblet.");
 				return false;
 			}
@@ -75,9 +75,9 @@ namespace HotellAdmin {
 
 			//Sjekk om kontoen eksisterer i databasen
 			//DataSet result = DatabaseManager.Query("SELECT brukernavn, passord FROM ansatte WHERE brukernavn = '" + username + "' AND passord = '" + password + "';");
-			int rowCount = DatabaseManager.ds.Tables["ansatte"].Select("brukernavn = '" + username + "' AND passord = '" + password + "'").Length;
+			int rowCount = DatabaseManager.CountRowsWithCondition("ansatte", "brukernavn = '" + username + "' AND passord = '" + password + "'");
 
-			if(rowCount == 0) {
+			if (rowCount == 0) {
 				errorMsg += "Denne kontoen eksisterer ikke, vennligst prøv på nytt.\n";
 				valid = false;
 			}

@@ -17,7 +17,6 @@ namespace HotellAdmin {
 		public string firstName;
 		public string lastName;
 
-
 		public Order(int orderID, string roomType, string fromDate, string toDate,
 			string status, int phoneNumber, string firstName, string lastName) {
 

@@ -164,7 +164,20 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Resources\toppbar.png" />
+    <EmbeddedResource Include="Resources\status_offline.png" />
+    <EmbeddedResource Include="Resources\status_online.png" />
+    <EmbeddedResource Include="Resources\oppdater_ikon.png" />
+    <EmbeddedResource Include="Resources\meny_ikon.png" />
+    <EmbeddedResource Include="Resources\toppbar.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\logo.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\error_icon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\error_window_icon.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

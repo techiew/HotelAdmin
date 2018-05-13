@@ -13,7 +13,7 @@ namespace HotellAdmin {
 			DataTable result = null;
 
 			try {
-				result = DatabaseManager.ds.Tables["bestillinger"].Select("tildelt = false").CopyToDataTable();
+				result = DatabaseManager.SelectFromTable("bestillinger", "tildelt = false").CopyToDataTable();
 			} catch (InvalidOperationException) {
 				
 			}

@@ -29,7 +29,7 @@
 			this.tabBooking = new System.Windows.Forms.TabPage();
 			this.tableLayoutBookingPanel = new System.Windows.Forms.TableLayoutPanel();
 			this.panelButtonsAndRooms = new System.Windows.Forms.Panel();
-			this.currentPeriod = new System.Windows.Forms.Label();
+			this.currentPeriod = new System.Windows.Forms.Button();
 			this.tableLayoutRoomsPanel = new System.Windows.Forms.TableLayoutPanel();
 			this.room1 = new System.Windows.Forms.Label();
 			this.room2 = new System.Windows.Forms.Label();
@@ -74,13 +74,17 @@
 			this.dropInConfirm = new System.Windows.Forms.Button();
 			this.tabOptions = new System.Windows.Forms.TabPage();
 			this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-			this.dataGridView1 = new System.Windows.Forms.DataGridView();
-			this.panel1 = new System.Windows.Forms.Panel();
-			this.syncXMLNowButton = new System.Windows.Forms.Button();
+			this.optionsPanelLeft = new System.Windows.Forms.Panel();
+			this.optionLabelDatabaseStatus = new System.Windows.Forms.Label();
+			this.optionsStatusHeader = new System.Windows.Forms.Label();
+			this.optionsHeader = new System.Windows.Forms.Label();
+			this.changeDatabaseStatusButton = new System.Windows.Forms.Button();
 			this.colorBlindMode = new System.Windows.Forms.CheckBox();
-			this.headerPictureBox = new System.Windows.Forms.PictureBox();
-			this.iconDatabaseMode = new System.Windows.Forms.PictureBox();
 			this.tooltipDatabaseMode = new System.Windows.Forms.ToolTip(this.components);
+			this.iconsPanel = new System.Windows.Forms.Panel();
+			this.labelDatabaseStatus = new System.Windows.Forms.Label();
+			this.iconDatabaseStatus = new System.Windows.Forms.PictureBox();
+			this.headerPictureBox = new System.Windows.Forms.PictureBox();
 			this.tabControl1.SuspendLayout();
 			this.tabBooking.SuspendLayout();
 			this.tableLayoutBookingPanel.SuspendLayout();
@@ -97,10 +101,10 @@
 			this.DropInButtons.SuspendLayout();
 			this.tabOptions.SuspendLayout();
 			this.tableLayoutPanel1.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
-			this.panel1.SuspendLayout();
+			this.optionsPanelLeft.SuspendLayout();
+			this.iconsPanel.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this.iconDatabaseStatus)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.headerPictureBox)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this.iconDatabaseMode)).BeginInit();
 			this.SuspendLayout();
 			// 
 			// tabControl1
@@ -146,7 +150,6 @@
 			this.tableLayoutBookingPanel.Name = "tableLayoutBookingPanel";
 			this.tableLayoutBookingPanel.RowCount = 1;
 			this.tableLayoutBookingPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-			this.tableLayoutBookingPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 502F));
 			this.tableLayoutBookingPanel.Size = new System.Drawing.Size(921, 502);
 			this.tableLayoutBookingPanel.TabIndex = 3;
 			// 
@@ -167,15 +170,13 @@
 			// 
 			this.currentPeriod.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.currentPeriod.BackColor = System.Drawing.Color.Gainsboro;
-			this.currentPeriod.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.currentPeriod.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.currentPeriod.Location = new System.Drawing.Point(7, 44);
+			this.currentPeriod.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.currentPeriod.Location = new System.Drawing.Point(5, 42);
 			this.currentPeriod.Name = "currentPeriod";
-			this.currentPeriod.Size = new System.Drawing.Size(625, 35);
+			this.currentPeriod.Size = new System.Drawing.Size(630, 36);
 			this.currentPeriod.TabIndex = 3;
 			this.currentPeriod.Text = "Viser oversikt for: i dag";
-			this.currentPeriod.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+			this.currentPeriod.UseVisualStyleBackColor = true;
 			this.currentPeriod.Click += new System.EventHandler(this.currentPeriod_Click);
 			// 
 			// tableLayoutRoomsPanel
@@ -201,7 +202,7 @@
 			this.tableLayoutRoomsPanel.Controls.Add(this.room9, 4, 1);
 			this.tableLayoutRoomsPanel.Controls.Add(this.room10, 4, 2);
 			this.tableLayoutRoomsPanel.Controls.Add(this.room11, 4, 3);
-			this.tableLayoutRoomsPanel.Location = new System.Drawing.Point(6, 83);
+			this.tableLayoutRoomsPanel.Location = new System.Drawing.Point(6, 81);
 			this.tableLayoutRoomsPanel.Margin = new System.Windows.Forms.Padding(0);
 			this.tableLayoutRoomsPanel.Name = "tableLayoutRoomsPanel";
 			this.tableLayoutRoomsPanel.RowCount = 4;
@@ -209,7 +210,7 @@
 			this.tableLayoutRoomsPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
 			this.tableLayoutRoomsPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
 			this.tableLayoutRoomsPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
-			this.tableLayoutRoomsPanel.Size = new System.Drawing.Size(627, 409);
+			this.tableLayoutRoomsPanel.Size = new System.Drawing.Size(627, 411);
 			this.tableLayoutRoomsPanel.TabIndex = 2;
 			// 
 			// room1
@@ -224,7 +225,7 @@
 			this.room1.Location = new System.Drawing.Point(1, 307);
 			this.room1.Margin = new System.Windows.Forms.Padding(0);
 			this.room1.Name = "room1";
-			this.room1.Size = new System.Drawing.Size(115, 101);
+			this.room1.Size = new System.Drawing.Size(115, 103);
 			this.room1.TabIndex = 0;
 			this.room1.Text = "Rom 1";
 			this.room1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -394,7 +395,7 @@
 			this.room11.Location = new System.Drawing.Point(510, 307);
 			this.room11.Margin = new System.Windows.Forms.Padding(0);
 			this.room11.Name = "room11";
-			this.room11.Size = new System.Drawing.Size(116, 101);
+			this.room11.Size = new System.Drawing.Size(116, 103);
 			this.room11.TabIndex = 10;
 			this.room11.Text = "Rom 11";
 			this.room11.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -500,7 +501,7 @@
 			this.label1.Name = "label1";
 			this.label1.Size = new System.Drawing.Size(277, 50);
 			this.label1.TabIndex = 1;
-			this.label1.Text = "Bestillinger";
+			this.label1.Text = "Utildelte bestillinger";
 			this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
 			// 
 			// listBoxOrders
@@ -553,9 +554,9 @@
 			this.tableLayoutDropIn.Margin = new System.Windows.Forms.Padding(10);
 			this.tableLayoutDropIn.Name = "tableLayoutDropIn";
 			this.tableLayoutDropIn.RowCount = 6;
-			this.tableLayoutDropIn.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 14.37126F));
-			this.tableLayoutDropIn.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 12.77445F));
-			this.tableLayoutDropIn.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 11.97605F));
+			this.tableLayoutDropIn.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 12.17565F));
+			this.tableLayoutDropIn.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 13.77246F));
+			this.tableLayoutDropIn.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 13.17365F));
 			this.tableLayoutDropIn.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 29.74052F));
 			this.tableLayoutDropIn.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 12.97405F));
 			this.tableLayoutDropIn.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 17.56487F));
@@ -641,9 +642,9 @@
 			this.DropInPeriod.Controls.Add(this.fromDateLabel);
 			this.DropInPeriod.Controls.Add(this.dropInToDate);
 			this.DropInPeriod.Controls.Add(this.dropInFromDate);
-			this.DropInPeriod.Location = new System.Drawing.Point(30, 140);
+			this.DropInPeriod.Location = new System.Drawing.Point(30, 134);
 			this.DropInPeriod.Name = "DropInPeriod";
-			this.DropInPeriod.Size = new System.Drawing.Size(888, 53);
+			this.DropInPeriod.Size = new System.Drawing.Size(888, 59);
 			this.DropInPeriod.TabIndex = 1;
 			// 
 			// toDateLabel
@@ -692,9 +693,9 @@
 			this.DropInCombo.BackColor = System.Drawing.Color.Transparent;
 			this.DropInCombo.Controls.Add(this.roomTypeLabel);
 			this.DropInCombo.Controls.Add(this.dropInComboBox);
-			this.DropInCombo.Location = new System.Drawing.Point(30, 76);
+			this.DropInCombo.Location = new System.Drawing.Point(30, 65);
 			this.DropInCombo.Name = "DropInCombo";
-			this.DropInCombo.Size = new System.Drawing.Size(888, 57);
+			this.DropInCombo.Size = new System.Drawing.Size(888, 62);
 			this.DropInCombo.TabIndex = 5;
 			// 
 			// roomTypeLabel
@@ -726,18 +727,18 @@
 			this.DropInHeader.Controls.Add(this.DropInHeaderLabel);
 			this.DropInHeader.Location = new System.Drawing.Point(30, 4);
 			this.DropInHeader.Name = "DropInHeader";
-			this.DropInHeader.Size = new System.Drawing.Size(888, 65);
+			this.DropInHeader.Size = new System.Drawing.Size(888, 54);
 			this.DropInHeader.TabIndex = 6;
 			// 
 			// DropInHeaderLabel
 			// 
 			this.DropInHeaderLabel.AutoSize = true;
-			this.DropInHeaderLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 26.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.DropInHeaderLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.DropInHeaderLabel.Location = new System.Drawing.Point(14, 15);
 			this.DropInHeaderLabel.Name = "DropInHeaderLabel";
-			this.DropInHeaderLabel.Size = new System.Drawing.Size(157, 39);
+			this.DropInHeaderLabel.Size = new System.Drawing.Size(154, 25);
 			this.DropInHeaderLabel.TabIndex = 0;
-			this.DropInHeaderLabel.Text = "Bestilling";
+			this.DropInHeaderLabel.Text = "Rombestilling";
 			// 
 			// DropInButtons
 			// 
@@ -802,56 +803,115 @@
 			this.tableLayoutPanel1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.tableLayoutPanel1.ColumnCount = 2;
-			this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-			this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-			this.tableLayoutPanel1.Controls.Add(this.dataGridView1, 0, 1);
-			this.tableLayoutPanel1.Controls.Add(this.panel1, 0, 0);
+			this.tableLayoutPanel1.ColumnCount = 1;
+			this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+			this.tableLayoutPanel1.Controls.Add(this.optionsPanelLeft, 0, 0);
 			this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
 			this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-			this.tableLayoutPanel1.RowCount = 2;
-			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-			this.tableLayoutPanel1.Size = new System.Drawing.Size(765, 475);
+			this.tableLayoutPanel1.RowCount = 1;
+			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this.tableLayoutPanel1.Size = new System.Drawing.Size(916, 499);
 			this.tableLayoutPanel1.TabIndex = 0;
 			// 
-			// dataGridView1
+			// optionsPanelLeft
 			// 
-			this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-			this.dataGridView1.Location = new System.Drawing.Point(3, 240);
-			this.dataGridView1.Name = "dataGridView1";
-			this.dataGridView1.Size = new System.Drawing.Size(376, 232);
-			this.dataGridView1.TabIndex = 2;
+			this.optionsPanelLeft.Controls.Add(this.optionLabelDatabaseStatus);
+			this.optionsPanelLeft.Controls.Add(this.optionsStatusHeader);
+			this.optionsPanelLeft.Controls.Add(this.optionsHeader);
+			this.optionsPanelLeft.Controls.Add(this.changeDatabaseStatusButton);
+			this.optionsPanelLeft.Controls.Add(this.colorBlindMode);
+			this.optionsPanelLeft.Location = new System.Drawing.Point(3, 3);
+			this.optionsPanelLeft.Name = "optionsPanelLeft";
+			this.optionsPanelLeft.Size = new System.Drawing.Size(910, 493);
+			this.optionsPanelLeft.TabIndex = 3;
 			// 
-			// panel1
+			// optionLabelDatabaseStatus
 			// 
-			this.panel1.Controls.Add(this.syncXMLNowButton);
-			this.panel1.Controls.Add(this.colorBlindMode);
-			this.panel1.Location = new System.Drawing.Point(3, 3);
-			this.panel1.Name = "panel1";
-			this.panel1.Size = new System.Drawing.Size(376, 231);
-			this.panel1.TabIndex = 3;
+			this.optionLabelDatabaseStatus.AutoSize = true;
+			this.optionLabelDatabaseStatus.Location = new System.Drawing.Point(35, 142);
+			this.optionLabelDatabaseStatus.Name = "optionLabelDatabaseStatus";
+			this.optionLabelDatabaseStatus.Size = new System.Drawing.Size(181, 16);
+			this.optionLabelDatabaseStatus.TabIndex = 8;
+			this.optionLabelDatabaseStatus.Text = "Online databasen er tilkoblet.";
 			// 
-			// syncXMLNowButton
+			// optionsStatusHeader
 			// 
-			this.syncXMLNowButton.Location = new System.Drawing.Point(13, 58);
-			this.syncXMLNowButton.Name = "syncXMLNowButton";
-			this.syncXMLNowButton.Size = new System.Drawing.Size(147, 29);
-			this.syncXMLNowButton.TabIndex = 2;
-			this.syncXMLNowButton.Text = "Sync med XML nå";
-			this.syncXMLNowButton.UseVisualStyleBackColor = true;
-			this.syncXMLNowButton.Click += new System.EventHandler(this.syncXMLNowButton_Click);
+			this.optionsStatusHeader.AutoSize = true;
+			this.optionsStatusHeader.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.optionsStatusHeader.Location = new System.Drawing.Point(29, 110);
+			this.optionsStatusHeader.Name = "optionsStatusHeader";
+			this.optionsStatusHeader.Size = new System.Drawing.Size(145, 20);
+			this.optionsStatusHeader.TabIndex = 7;
+			this.optionsStatusHeader.Text = "Database Status";
+			// 
+			// optionsHeader
+			// 
+			this.optionsHeader.AutoSize = true;
+			this.optionsHeader.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.optionsHeader.Location = new System.Drawing.Point(23, 22);
+			this.optionsHeader.Name = "optionsHeader";
+			this.optionsHeader.Size = new System.Drawing.Size(102, 20);
+			this.optionsHeader.TabIndex = 4;
+			this.optionsHeader.Text = "Innstillinger";
+			// 
+			// changeDatabaseStatusButton
+			// 
+			this.changeDatabaseStatusButton.Location = new System.Drawing.Point(38, 172);
+			this.changeDatabaseStatusButton.Name = "changeDatabaseStatusButton";
+			this.changeDatabaseStatusButton.Size = new System.Drawing.Size(186, 38);
+			this.changeDatabaseStatusButton.TabIndex = 3;
+			this.changeDatabaseStatusButton.Text = "Bruk offline database (XML)";
+			this.changeDatabaseStatusButton.UseVisualStyleBackColor = true;
+			this.changeDatabaseStatusButton.Click += new System.EventHandler(this.changeDatabaseStatusButton_Click);
 			// 
 			// colorBlindMode
 			// 
 			this.colorBlindMode.AutoSize = true;
-			this.colorBlindMode.Location = new System.Drawing.Point(13, 19);
+			this.colorBlindMode.Location = new System.Drawing.Point(38, 54);
 			this.colorBlindMode.Name = "colorBlindMode";
 			this.colorBlindMode.Size = new System.Drawing.Size(136, 20);
 			this.colorBlindMode.TabIndex = 1;
 			this.colorBlindMode.Text = "Fargeblind Modus";
 			this.colorBlindMode.UseVisualStyleBackColor = true;
 			this.colorBlindMode.CheckedChanged += new System.EventHandler(this.colorBlindMode_CheckedChanged);
+			// 
+			// tooltipDatabaseMode
+			// 
+			this.tooltipDatabaseMode.ToolTipTitle = "Offline modus";
+			// 
+			// iconsPanel
+			// 
+			this.iconsPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.iconsPanel.BackColor = System.Drawing.Color.Transparent;
+			this.iconsPanel.Controls.Add(this.labelDatabaseStatus);
+			this.iconsPanel.Controls.Add(this.iconDatabaseStatus);
+			this.iconsPanel.Location = new System.Drawing.Point(745, 62);
+			this.iconsPanel.Name = "iconsPanel";
+			this.iconsPanel.Size = new System.Drawing.Size(191, 25);
+			this.iconsPanel.TabIndex = 9;
+			// 
+			// labelDatabaseStatus
+			// 
+			this.labelDatabaseStatus.AutoSize = true;
+			this.labelDatabaseStatus.BackColor = System.Drawing.Color.Transparent;
+			this.labelDatabaseStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.labelDatabaseStatus.Location = new System.Drawing.Point(118, 4);
+			this.labelDatabaseStatus.Name = "labelDatabaseStatus";
+			this.labelDatabaseStatus.Size = new System.Drawing.Size(49, 15);
+			this.labelDatabaseStatus.TabIndex = 4;
+			this.labelDatabaseStatus.Text = "Online";
+			// 
+			// iconDatabaseStatus
+			// 
+			this.iconDatabaseStatus.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.iconDatabaseStatus.BackColor = System.Drawing.Color.Transparent;
+			this.iconDatabaseStatus.Location = new System.Drawing.Point(164, 3);
+			this.iconDatabaseStatus.Name = "iconDatabaseStatus";
+			this.iconDatabaseStatus.Size = new System.Drawing.Size(24, 21);
+			this.iconDatabaseStatus.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+			this.iconDatabaseStatus.TabIndex = 3;
+			this.iconDatabaseStatus.TabStop = false;
 			// 
 			// headerPictureBox
 			// 
@@ -867,28 +927,16 @@
 			this.headerPictureBox.TabIndex = 2;
 			this.headerPictureBox.TabStop = false;
 			// 
-			// iconDatabaseMode
-			// 
-			this.iconDatabaseMode.BackColor = System.Drawing.Color.Red;
-			this.iconDatabaseMode.Location = new System.Drawing.Point(853, 65);
-			this.iconDatabaseMode.Name = "iconDatabaseMode";
-			this.iconDatabaseMode.Size = new System.Drawing.Size(79, 22);
-			this.iconDatabaseMode.TabIndex = 3;
-			this.iconDatabaseMode.TabStop = false;
-			// 
-			// tooltipDatabaseMode
-			// 
-			this.tooltipDatabaseMode.ToolTipTitle = "Offline modus";
-			// 
 			// FormHotellAdmin
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(948, 605);
-			this.Controls.Add(this.iconDatabaseMode);
+			this.Controls.Add(this.iconsPanel);
 			this.Controls.Add(this.headerPictureBox);
 			this.Controls.Add(this.tabControl1);
 			this.DataBindings.Add(new System.Windows.Forms.Binding("Location", global::HotellAdmin.Properties.Settings.Default, "Location", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Location = global::HotellAdmin.Properties.Settings.Default.Location;
 			this.Name = "FormHotellAdmin";
 			this.Text = "HotellAdmin";
@@ -916,11 +964,12 @@
 			this.DropInButtons.PerformLayout();
 			this.tabOptions.ResumeLayout(false);
 			this.tableLayoutPanel1.ResumeLayout(false);
-			((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
-			this.panel1.ResumeLayout(false);
-			this.panel1.PerformLayout();
+			this.optionsPanelLeft.ResumeLayout(false);
+			this.optionsPanelLeft.PerformLayout();
+			this.iconsPanel.ResumeLayout(false);
+			this.iconsPanel.PerformLayout();
+			((System.ComponentModel.ISupportInitialize)(this.iconDatabaseStatus)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.headerPictureBox)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(this.iconDatabaseMode)).EndInit();
 			this.ResumeLayout(false);
 
 		}
@@ -953,7 +1002,6 @@
 		private System.Windows.Forms.TabPage tabDropin;
 		private System.Windows.Forms.TabPage tabOptions;
 		private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
-		private System.Windows.Forms.Label currentPeriod;
 		private System.Windows.Forms.TableLayoutPanel tableLayoutDropIn;
 		private System.Windows.Forms.Panel DropInPerson;
 		private System.Windows.Forms.TextBox dropInLastname;
@@ -978,11 +1026,16 @@
 		private System.Windows.Forms.Label toDateLabel;
 		private System.Windows.Forms.Label DropInMessage;
         private System.Windows.Forms.CheckBox colorBlindMode;
-		private System.Windows.Forms.DataGridView dataGridView1;
-		private System.Windows.Forms.Panel panel1;
-		private System.Windows.Forms.Button syncXMLNowButton;
-		private System.Windows.Forms.PictureBox iconDatabaseMode;
+		private System.Windows.Forms.Panel optionsPanelLeft;
+		private System.Windows.Forms.PictureBox iconDatabaseStatus;
 		private System.Windows.Forms.ToolTip tooltipDatabaseMode;
+		private System.Windows.Forms.Button changeDatabaseStatusButton;
+		private System.Windows.Forms.Label optionsHeader;
+		private System.Windows.Forms.Label optionsStatusHeader;
+		private System.Windows.Forms.Label optionLabelDatabaseStatus;
+		private System.Windows.Forms.Panel iconsPanel;
+		private System.Windows.Forms.Label labelDatabaseStatus;
+		private System.Windows.Forms.Button currentPeriod;
 	}
 }
 
