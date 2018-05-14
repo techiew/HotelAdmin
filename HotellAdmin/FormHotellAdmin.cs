@@ -30,11 +30,13 @@ namespace HotellAdmin {
         string listBoxItems;
 		bool loginRequired = true; // Slå av eller på kravet for å logge inn
 
+		// Lister for å holde dataene våre
 		List<Room> roomDataList;
 		List<Order> orderDataList;
 		List<Booking> bookingDataList;
 		List<Label> roomLabelList = new List<Label>();
 
+		// Klassene som henter data fra datasett
 		OrderData od = new OrderData();
 		RoomData rd = new RoomData();
 		BookingData bd = new BookingData();
@@ -92,6 +94,7 @@ namespace HotellAdmin {
 			DatabaseManager.Init(this);
 			DatabaseManager.Open("46.9.246.190", "24440", "hotell", "admin", "admin");
 
+			// Hvis vi ikke får koblet til, vis en errormelding
 			while (!DatabaseManager.IsConnected() && !DatabaseManager.IsUsingLocalDatabase()) {
 				ShowDatabaseError();
 			}
@@ -118,6 +121,7 @@ namespace HotellAdmin {
 			int index = (roomsPerFloor * (floor - 1));
 			Room room;
 
+			// Loop over alle romrutene og fyll inn data
 			for (int i = 0;  i < roomLabelList.Count; i++) {
 				//Console.WriteLine(index + " | " + roomDataList.ElementAtOrDefault(index));
 				Color buttonColor = Color.LightGray;
@@ -175,7 +179,7 @@ namespace HotellAdmin {
 			for (int i = 0; i < orderDataList.Count; i++) {
 				int orderID = orderDataList[i].orderID;
 				string roomType = orderDataList[i].roomType;
-				string fromDate = orderDataList[i].fromDate;     // Istedet for romtype skal vi ha fradato og tildato må også hente bestillingID
+				string fromDate = orderDataList[i].fromDate;
 				string toDate = orderDataList[i].toDate;
 				string status = orderDataList[i].status;
 				int phoneNumber = orderDataList[i].phoneNumber;
@@ -246,7 +250,7 @@ namespace HotellAdmin {
 
 		}
 
-		// Endre bakgrunn og tekst på status ikonet oppe i høyre hjørne
+		// Endre bilde og tekst på status ikonet oppe i høyre hjørne
 		public void UpdateDatabaseStatus(bool status) {
 
 			if (status) {
