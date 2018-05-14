@@ -1,15 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using MySql.Data.MySqlClient;
 using System.Data;
-using System.Windows.Forms;
 using System.IO;
 
 namespace HotellAdmin {
 
+	// Denne klassen er ansvarlig for å holde styr på databasetilkoblingen vår
+	// Den kan åpne og lukke databasetilkobling fra MySql databasen vår
+	// eller lese data fra en lokal XML fil.
+	// Vi kan sende spørringer for data uavhengig om de ligger i XML eller på databasen
+	// Endringer på databasen blir synkronisert i den lokale XML filen automatisk
 	static class DatabaseManager {
 
 	    private static bool initialized = false;
@@ -30,6 +30,7 @@ namespace HotellAdmin {
 		private static MySqlDataAdapter daRoomTypes;
 		private static FormHotellAdmin gui;
 
+		// Sett noen standard verdier, må kjøres først
 		public static void Init(FormHotellAdmin gui) {
 			if (initialized) return;
 			initialized = true;
@@ -41,6 +42,88 @@ namespace HotellAdmin {
 			DatabaseManager.gui = gui;
 		}
 
+		// Åpne databasetilkobling
+		public static void Open(string server, string port, string database, string username, string password) {
+
+			if (!initialized) return;
+
+			if (conn != null) {
+
+				if (conn.State == ConnectionState.Open) {
+					Console.WriteLine("Open: En databasetilkobling eksisterer allerede");
+					return;
+				}
+
+			}
+
+			string connectionString = 
+				@"server="+server+";port="+port+";database="+database+";username="+username+";password="+password;
+
+			try {
+				conn = new MySqlConnection(connectionString);
+				conn.StateChange -= new StateChangeEventHandler(OnStateChange);
+				conn.StateChange += new StateChangeEventHandler(OnStateChange);
+				conn.Open();
+				FillDataSet();
+				MergeLocalAndExternalDatabase();
+				usingLocalDatabase = false;
+				connected = true;
+
+				Console.WriteLine("Open: Koblet til database. MySQL versjon: {0}", conn.ServerVersion);
+
+			} catch (MySqlException ex) {
+				connected = false;
+				Console.WriteLine("Error: {0}", ex.ToString());
+			} 
+
+		}
+
+		// Les data fra XML fil
+		public static void OpenLocalDatabase() {
+
+			if (!File.Exists("hotelladmin_database.xml")) {
+				Console.WriteLine("Database XML filen eksisterer ikke");
+				return;
+			} else if(!File.Exists("hotelladmin_schema.xml")) {
+				Console.WriteLine("Database skjema filen eksisterer ikke");
+				return;
+			}
+
+			if (usingLocalDatabase || !initialized) return;
+
+			if (connected) {
+				conn.Close();
+				connected = false;
+			}
+
+			ds.Clear();
+			ds.ReadXmlSchema("hotelladmin_schema.xml");
+			ds.ReadXml("hotelladmin_database.xml");
+			usingLocalDatabase = true;
+
+			employeesTable = ds.Tables["ansatte"];
+			ordersTable = ds.Tables["bestillinger"];
+			bookingTable = ds.Tables["booking"];
+			roomTable = ds.Tables["rom"];
+			roomTypesTable = ds.Tables["romtyper"];
+		}
+
+		// Lukk databasetilkobling
+		public static void Close() {
+
+			if (!initialized) return;
+
+			if (conn.State == ConnectionState.Open) {
+				conn.Close();
+				Console.WriteLine("Close: Lukket databasetilkoblingen");
+				connected = false;
+			} else {
+				Console.WriteLine("Close: Ingen database er tilkoblet");
+			}
+
+		}
+
+		// Fyll opp datasettet vårt via databasen
 		private static void FillDataSet() {
 
 			if (!initialized) return;
@@ -78,84 +161,7 @@ namespace HotellAdmin {
 			roomTypesTable = ds.Tables["romtyper"];
 		}
 
-		public static void Open(string server, string port, string database, string username, string password) {
-
-			if (!initialized) return;
-
-			if (conn != null) {
-
-				if (conn.State == ConnectionState.Open) {
-					Console.WriteLine("Open: En databasetilkobling eksisterer allerede");
-					return;
-				}
-
-			}
-
-			string connectionString = 
-				@"server="+server+";port="+port+";database="+database+";username="+username+";password="+password;
-
-			try {
-				conn = new MySqlConnection(connectionString);
-				conn.StateChange -= new StateChangeEventHandler(OnStateChange);
-				conn.StateChange += new StateChangeEventHandler(OnStateChange);
-				conn.Open();
-				FillDataSet();
-				MergeLocalAndExternalDatabase();
-				usingLocalDatabase = false;
-				connected = true;
-
-				Console.WriteLine("Open: Koblet til database. MySQL versjon: {0}", conn.ServerVersion);
-
-			} catch (MySqlException ex) {
-				connected = false;
-				Console.WriteLine("Error: {0}", ex.ToString());
-			} 
-
-		}
-
-		public static void OpenLocalDatabase() {
-
-			if (!File.Exists("hotelladmin_database.xml")) {
-				Console.WriteLine("Database XML filen eksisterer ikke");
-				return;
-			} else if(!File.Exists("hotelladmin_schema.xml")) {
-				Console.WriteLine("Database skjema filen eksisterer ikke");
-				return;
-			}
-
-			if (usingLocalDatabase || !initialized) return;
-
-			if (connected) {
-				conn.Close();
-				connected = false;
-			}
-
-			ds.Clear();
-			ds.ReadXmlSchema("hotelladmin_schema.xml");
-			ds.ReadXml("hotelladmin_database.xml");
-			usingLocalDatabase = true;
-
-			employeesTable = ds.Tables["ansatte"];
-			ordersTable = ds.Tables["bestillinger"];
-			bookingTable = ds.Tables["booking"];
-			roomTable = ds.Tables["rom"];
-			roomTypesTable = ds.Tables["romtyper"];
-		}
-
-		public static void Close() {
-
-			if (!initialized) return;
-
-			if (conn.State == ConnectionState.Open) {
-				conn.Close();
-				Console.WriteLine("Close: Lukket databasetilkoblingen");
-				connected = false;
-			} else {
-				Console.WriteLine("Close: Ingen database er tilkoblet");
-			}
-
-		}
-
+		// Slå sammen dataene fra XML fil med dataene på databasen
 		private static void MergeLocalAndExternalDatabase() {
 			DataSet local = new DataSet("local");
 			bool schemaExists = File.Exists("hotelladmin_schema.xml");
@@ -208,6 +214,7 @@ namespace HotellAdmin {
 		//	return qds;
 		//}
 
+		// Legg inn en rad i en angitt tabell
 		public static bool InsertRow(string tableName, DataRow rowData) {
 
 			if (!initialized || (!usingLocalDatabase && !CheckConnection())) return false;
@@ -294,6 +301,7 @@ namespace HotellAdmin {
 			return true;
 		}
 
+		// Oppdater en rad med en spesifikk primærnøkkel i en angitt tabell 
 		public static bool UpdateRow(string tableName, string primaryKey, DataRow rowData) {
 
 			if (!initialized || (!usingLocalDatabase && !CheckConnection())) return false;
@@ -371,18 +379,22 @@ namespace HotellAdmin {
 			return true;
 		}
 
+		// Prøv å finn en rad med en spesifikk primærnøkkel i en angitt tabell
 		public static DataRow FindRowInTable(string tableName, int primaryKey) {
 			return ds.Tables[tableName].Rows.Find(primaryKey);
 		}
 
+		// Tell alle radene i en angitt tabell som oppfyller kravet
 		public static int CountRowsWithCondition(string tableName, string condition) {
 			return ds.Tables[tableName].Select(condition).Length;
 		}
 
+		// Hent ut alle rader fra en angitt tabell som oppfyller kravet
 		public static DataRow[] SelectFromTable(string tableName, string condition) {
 			return ds.Tables[tableName].Select(condition);
 		}
 
+		// Når det skjer en oppdatering i databasen...
 		private static void OnUpdate() {
 
 			if (!initialized) return;
@@ -391,6 +403,7 @@ namespace HotellAdmin {
 			ds.WriteXmlSchema("hotelladmin_schema.xml");
 		}
 
+		// Når det skjer noe med databasetilkoblingen vår
 		private static void OnStateChange(object sender, StateChangeEventArgs e) {
 
 			if (e.CurrentState == ConnectionState.Open) {
@@ -401,6 +414,7 @@ namespace HotellAdmin {
 
 		}
 
+		// Sjekk om databasen fortsatt er tilkoblet
 		private static bool CheckConnection() {
 
 			if(conn == null || !initialized || conn.State == (ConnectionState.Closed | ConnectionState.Broken)) {
@@ -423,6 +437,7 @@ namespace HotellAdmin {
 			return true;
 		}
 
+		// Skriv datasettet vårt inn i en XML fil
 		public static void SyncXML() {
 
 			if (!initialized) return;
@@ -433,22 +448,27 @@ namespace HotellAdmin {
 
 		// Getters & setters ------------------------------------
 
+		// Hent ut en "eksempelrad" med riktig skjema fra en angitt tabell
 		public static DataRow GetRowWithSchema(string tableName) {
 			return ds.Tables[tableName].NewRow();
 		}
 
+		// Hent ut en hel tabell
 		public static DataTable GetTable(string tableName) {
 			return ds.Tables[tableName];
 		}
 
+		// Sjekk om DatabaseManager er initialisert
 		public static bool IsInitialized() {
 			return initialized;
 		}
 
+		// Er databasen tilkoblet? (Online)
 		public static bool IsConnected() {
 			return connected;
 		}
 
+		// Bruker vi lokal database? (Offline)
 		public static bool IsUsingLocalDatabase() {
 			return usingLocalDatabase;
 		}

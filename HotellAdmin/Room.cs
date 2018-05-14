@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace HotellAdmin {
 
+	// En datastruktur for å holde romdata
 	class Room {
 
 		public int number;

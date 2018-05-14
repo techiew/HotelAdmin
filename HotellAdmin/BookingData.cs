@@ -7,8 +7,10 @@ using System.Threading.Tasks;
 
 namespace HotellAdmin {
 
+	// Inneholder funksjoner for å hente bookingdata fra database/XML
 	class BookingData {
 
+		//Datoformatet som brukes i databasen
 		private static string dateFormat = "yyyy-MM-dd";
 
 		//Henter alle registrerte bookinger i databasen som ikke har utgått (før dags dato)
@@ -40,6 +42,7 @@ namespace HotellAdmin {
 			return bookings;
 		}
 
+		// Sjekk om et angitt rom er ledig for en gitt periode
 		public static bool IsRoomOccupiedForPeriod(int roomID, string fromDate, string toDate) {
 			//DataSet result = DatabaseManager.Query
 			//(
@@ -61,6 +64,7 @@ namespace HotellAdmin {
 			return (count == 0) ? false : true;
 		}
 
+		// Finn alle rom som er ledige for en periode
 		public static List<Room> GetAvailableRoomsForPeriod(string fromDate, string toDate) {
 			//DataSet result = DatabaseManager.Query
 			//	(
@@ -113,6 +117,7 @@ namespace HotellAdmin {
 			return availableRooms;
 		}
 
+		// Finn alle rom som er ledige for dags dato
 		public static List<Room> GetAvailableRoomsForToday() {
 			//DataSet result = DatabaseManager.Query
 			//	(

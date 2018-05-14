@@ -5,26 +5,29 @@ using System.Drawing;
 using System.Globalization;
 using System.Linq;
 using System.Windows.Forms;
-using System.Configuration;
 
 
-// FormHotellAdmin.cs - Håndtere visning av data
-// OrderData.cs - Håndtere henting av bestillingsdata
-// RoomData.cs - Håndtere henting av romdata
-// DatabaseManager.cs - Håndtere funksjoner for datasett, og åpne/lukke DB tilkobling
-// BookingData.cs - Har funksjoner som viser om rom er ledige eller opptatt for en gitt periode
+// FormHotellAdmin.cs - Håndtere visning av data på brukergrensesnittet
+// OrderData.cs - Henting og håndtering av bestillingsdata
+// RoomData.cs - Henting og håndtering av romdata
+// DatabaseManager.cs - Håndtere funksjoner for datasett, åpne/lukke DB tilkobling, skrive til XML
+// BookingData.cs - Har nyttige funksjoner for å f.eks. finne ledige rom til en gitt periode
+// DatabaseErrorWindow.cs - Vise feilmeldinger relatert til databasen
+// LoginWindow.cs - La brukeren logge inn
 
 namespace HotellAdmin {
 
+	// Hoved vinduet
     public partial class FormHotellAdmin : Form {
+
 		int floors = 4;
-		int roomsPerFloor = 11; // sett til # av labels i rutene?
+		int roomsPerFloor = 11;
 		int selectedFloor = 1;
 		int orderID;
 		string flippedFromDate;
         string flippedToDate;
         string listBoxItems;
-		bool loginRequired = true;
+		bool loginRequired = true; // Slå av eller på kravet for å logge inn
 
 		List<Room> roomDataList;
 		List<Order> orderDataList;
@@ -46,6 +49,7 @@ namespace HotellAdmin {
 			InitializeComponent();
         }
 
+		// Start opp database, hent data, sette verdier og lag event handlers
 		private void FormHotellAdmin_Load(object sender, EventArgs e) {
 
 			OpenDatabase();
@@ -81,6 +85,7 @@ namespace HotellAdmin {
 
 		}
 
+		// Prøv å koble til databasen via DatabaseManager
         private void OpenDatabase() {
 			//string db = @"server=46.9.246.190;database=hotell;port=24440;userid=admin;password=admin;";
 			DatabaseManager.Init(this);
@@ -92,10 +97,12 @@ namespace HotellAdmin {
 
 		}
 
+		// Hent data for alle rom og legg det i en liste
 		private void GetRoomData() {
 			roomDataList = rd.GetData();
 		}
 
+		// Vis rom dataene i romrutene
 		private void ShowRoomData(int floor) {
 
 			if(roomLabelList.Count == 0) {
@@ -150,10 +157,12 @@ namespace HotellAdmin {
 
 		}
 
+		// Hent bestillingsdata og legg det i en liste
 		private void GetOrderData() {
             orderDataList = od.GetData();
         }
 
+		// Vis utildelte bestillinger i listeboksen til høyre
 		private void ShowOrderData() {
 
 			listBoxOrders.Items.Clear();
@@ -177,10 +186,12 @@ namespace HotellAdmin {
 
         }
 
+		// Hent data om booking (bestillinger som er tildelt)
 		private void GetBookingData() {
 			bookingDataList = bd.GetData();
 		}
 
+		// Fyll inn nødvendig data i drop-in skjemaet
 		private void GetDropInData() {
 			DataRow[] result = DatabaseManager.SelectFromTable("romtyper", "romtype <> 'xdxdxdxd'");
 			//DatabaseManager.Query("SELECT romtype FROM romtyper;"); // TODO: må fikse han karen her, funker ikke i offline modus
@@ -196,6 +207,7 @@ namespace HotellAdmin {
 			dropInComboBox.SelectedIndex = 0;
 		}
 
+		// Finn alle rom som er ledige for dags dato
 		private void ShowRoomsForToday() {
 			List<Room> availableRooms = BookingData.GetAvailableRoomsForToday();
 
@@ -216,6 +228,7 @@ namespace HotellAdmin {
 			ShowRoomData(selectedFloor);
 		}
 
+		// Vis feilmelding for database, la brukeren velge om de vil bruke XML-filen som database
 		public void ShowDatabaseError() {
 			DatabaseErrorWindow dew = new DatabaseErrorWindow();
 			var result = dew.ShowDialog();
@@ -232,6 +245,7 @@ namespace HotellAdmin {
 
 		}
 
+		// Endre bakgrunn og tekst på status ikonet oppe i høyre hjørne
 		public void UpdateDatabaseStatus(bool status) {
 
 			if (status) {
@@ -248,6 +262,7 @@ namespace HotellAdmin {
 
 		}
 
+		// Be brukeren om å logge inn
 		private void RequestLogin() {
 			LoginWindow lw = new LoginWindow();
 			var result = lw.ShowDialog();
@@ -277,10 +292,7 @@ namespace HotellAdmin {
 
 		//EVENT HANDLERS ---------------------------------------------------------------------------
 
-		//Burde egentlig ha en felles event handler for disse, men knappene skal gjøre litt forskjellige ting.
-		//så en felles handler hadde gjort koden mer DRY, men blir mer knotete å legge til forskjellige funksjonalitet
-		//EDIT: adda en felles handler, men fortsatt ikke helt DRY
-		//EDIT: nvm fiksa alt, men bare lar det her stå, ikke fjern pls
+		// Etasjeknappene
 		private void buttonFirstFloor_MouseDown(object sender, EventArgs e) {
 			selectedFloor = 1;
 		}
@@ -293,6 +305,7 @@ namespace HotellAdmin {
 			selectedFloor = 3;
 		}
 
+		// Felles event handler for alle etasjeknappene
 		private void buttons_MouseDown(object sender, MouseEventArgs e) {
 
 			foreach (Control c in tableLayoutFloorButtons.Controls.OfType<Button>()) {
@@ -307,6 +320,7 @@ namespace HotellAdmin {
 			ShowRoomData(selectedFloor);
         }
 
+		// Bestillings-listeboksen
         private void listBoxOrders_MouseDown(object sender, MouseEventArgs e) {
             int index = listBoxOrders.IndexFromPoint(e.X, e.Y);
 
@@ -366,6 +380,7 @@ namespace HotellAdmin {
 
         }
 
+		// DragDrop handler for romrutene
         private void labels_DragDrop(object sender, DragEventArgs e) {
 
 			if (e.Data.GetDataPresent(DataFormats.StringFormat)) {
@@ -411,10 +426,12 @@ namespace HotellAdmin {
 
         }
 
+		// Romrutene
         private void labels_DragOver(object sender, DragEventArgs e) {
             e.Effect = DragDropEffects.All;
         }
 
+		// Handler for periodeknappen oppe i midten, lar deg gå tilbake til dags dato
 		private void currentPeriod_Click(object sender, EventArgs e) {
 
 			for (int i = 0; i < roomDataList.Count; i++) {
@@ -425,6 +442,7 @@ namespace HotellAdmin {
 			currentPeriod.Text = "Viser oversikt for: i dag";
 		}
 
+		// Submit knappen i drop-in skjemaet
         private void dropInConfirm_Click(object sender, EventArgs e) {
 			bool validOrder = ValidateForm();
 
@@ -445,14 +463,15 @@ namespace HotellAdmin {
 			row["fornavn"] = firstName;
 			row["etternavn"] = lastName;
 			DatabaseManager.InsertRow("bestillinger", row);
-           // DatabaseManager.Query("INSERT INTO bestillinger (romtype, fradato, tildato, tlf, fornavn, etternavn)" +
-			//	"VALUES ('" + roomType + "', '" + fromDate + "', '" + toDate + "', " + tlf + ", '" + foreName + "', '" + afterName + "');");
+			//DatabaseManager.Query("INSERT INTO bestillinger (romtype, fradato, tildato, tlf, fornavn, etternavn)" +
+			//"VALUES ('" + roomType + "', '" + fromDate + "', '" + toDate + "', " + tlf + ", '" + foreName + "', '" + afterName + "');");
             DropInMessage.Text = "Bestillingen har nå blitt registrert!";
             DropInMessage.Visible = true;
             GetOrderData();
 			ShowOrderData();
         }
 
+		// Nullstill knappen på skjemaet
 		private void dropInReset_Click(object sender, EventArgs e) {
 			dropInFromDate.Text = "";
 			dropInToDate.Text = "";
@@ -461,6 +480,7 @@ namespace HotellAdmin {
 			dropInPhoneNumber.Text = "";
 		}
 
+		// Fargeblindmodus innstilling
 		private void colorBlindMode_CheckedChanged(object sender, EventArgs e) {
 
             if (colorBlindMode.Checked) {
@@ -478,6 +498,7 @@ namespace HotellAdmin {
             ShowRoomData(1);
         }
 
+		// Database status knappen
 		private void changeDatabaseStatusButton_Click(object sender, EventArgs e) {
 
 			if (DatabaseManager.IsUsingLocalDatabase()) {
@@ -485,19 +506,23 @@ namespace HotellAdmin {
 			} else {
 				DatabaseManager.OpenLocalDatabase();
 			}
+
 		}
 
+		// Startes hvis vinduet blir lukket, lagrer innstillinger
 		private void FormHotellAdmin_FormClosing(object sender, FormClosingEventArgs e) {
 			Properties.Settings.Default.FormSize = this.Size;
 			Properties.Settings.Default.Location = this.Location;
 			Properties.Settings.Default.Save();
 		}
 
-		private void FormHotellAdmin_ResizeBegin(Object sender, EventArgs e) {
+		// Når brukeren endrer størrelsen på vinduet...
+		private void FormHotellAdmin_ResizeBegin(object sender, EventArgs e) {
 			SuspendLayout();
 		}
 
-		private void FormHotellAdmin_ResizeEnd(Object sender, EventArgs e) {
+		// Når brukeren slutter å endre størrelsen på vinduet...
+		private void FormHotellAdmin_ResizeEnd(object sender, EventArgs e) {
 			ResumeLayout();
 		}
 

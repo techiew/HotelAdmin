@@ -26,6 +26,7 @@ namespace HotellAdmin {
             loginUsername.Text = Properties.Settings.Default.RememberedUsername;
         }
 
+		// Når brukeren prøver å logge inn
         private void loginSubmit_Click(object sender, EventArgs e) {
 			string username = loginUsername.Text.ToLower();
 			string password = loginPassword.Text;
@@ -43,6 +44,7 @@ namespace HotellAdmin {
 			this.Close();
 		}
 
+		// Valider innlogging
 		private bool ValidateLogin(string username, string password) {
 			bool valid = true;
 
@@ -87,6 +89,7 @@ namespace HotellAdmin {
 			return valid;
 		}
 
+		// Hvis vinduet lukkes...
 		private void LoginWindow_FormClosing(object sender, FormClosingEventArgs e) {
 
 			if(Properties.Settings.Default.RememberUsername == false) {
@@ -102,6 +105,7 @@ namespace HotellAdmin {
 
 		}
 
+		// Innstilling for å huske brukernavn
 		private void usernameCheckBox_CheckedChanged(object sender, EventArgs e) {
 
 			if(usernameCheckBox.Checked) {
@@ -112,6 +116,9 @@ namespace HotellAdmin {
 
 		}
 
+		// Når brukeren trykker en knapp...
+		// Disse KeyDown og KeyUp lar deg bytte mellom brukernavn og passordfeltet
+		// når man trykker enter. Hvis man trykker enter fra passordfeltet så vil den prøve å logge inn
 		private void loginUsername_KeyDown(object sender, KeyEventArgs e) {
 
 			if(e.KeyCode == Keys.Enter) {
@@ -137,6 +144,7 @@ namespace HotellAdmin {
 
 		}
 
+		// Når brukeren slipper en knapp...
 		private void loginPassword_KeyDown(object sender, KeyEventArgs e) {
 
 			if (e.KeyCode == Keys.Enter) {

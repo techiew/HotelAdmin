@@ -6,6 +6,10 @@ using System.Threading.Tasks;
 
 namespace HotellAdmin {
 
+	// En datastruktur for å holde bestillingsdata
+	// Det er verdt å nevne at denne klassen og de andre lignende klassene:
+	// Order, Room, Booking, har mer eller mindre samme oppsett som tabellene i databasen
+	// Dvs. at hvert objekt av disse typene er lik en rad i databasen
 	class Order {
 
 		public int orderID;

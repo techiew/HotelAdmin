@@ -7,8 +7,10 @@ using System.Data;
 
 namespace HotellAdmin {
 
+	// Inneholder funksjoner for å hente bestillingsdata fra database/XML
 	class OrderData {
 
+		// Hent data som vi trenger om bestillinger
         public List<Order> GetData() {
 			DataTable result = null;
 

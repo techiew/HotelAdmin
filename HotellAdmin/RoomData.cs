@@ -7,8 +7,10 @@ using System.Data;
 
 namespace HotellAdmin {
 
+	// Inneholder funksjoner for å hente romdata fra database/XML
 	class RoomData {
 
+		// Hent data som vi trenger om rom
 		public List<Room> GetData() {
 
 			DataTable result = DatabaseManager.GetTable("rom");

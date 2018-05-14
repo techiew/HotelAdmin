@@ -6,7 +6,9 @@ using System.Threading.Tasks;
 
 namespace HotellAdmin {
 
+	// Datastruktur for å holde booking data
 	class Booking {
+
 		public int bookingID;
 		public int roomID;
 		public int orderID;
