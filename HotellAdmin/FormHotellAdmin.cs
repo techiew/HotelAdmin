@@ -24,7 +24,8 @@ namespace HotellAdmin {
 		int roomsPerFloor = 11;
 		int selectedFloor = 1;
 		int orderID;
-		string flippedFromDate;
+        int index;
+        string flippedFromDate;
         string flippedToDate;
         string listBoxItems;
 		bool loginRequired = true; // Slå av eller på kravet for å logge inn
@@ -316,13 +317,13 @@ namespace HotellAdmin {
 			Button button = (sender as Button);
 			button.BackColor = Color.CornflowerBlue;
 			button.ForeColor = Color.White;
-
 			ShowRoomData(selectedFloor);
+
         }
 
 		// Bestillings-listeboksen
         private void listBoxOrders_MouseDown(object sender, MouseEventArgs e) {
-            int index = listBoxOrders.IndexFromPoint(e.X, e.Y);
+            index = listBoxOrders.IndexFromPoint(e.X, e.Y);
 
             if (index == -1) return;
 
@@ -369,14 +370,9 @@ namespace HotellAdmin {
                 roomDataList[i].assigned = isAssigned;
                 roomDataList[i].wrongRoomType = isWrongRoomType;
 			}
-
+   
 			ShowRoomData(selectedFloor);
-
 			DragDropEffects dde = DoDragDrop(listBoxItems, DragDropEffects.All);
-
-            if (dde == DragDropEffects.All) {
-                listBoxOrders.Items.RemoveAt(index); // må fikse slik at listeboks itemet bare blir fjerna hvis endringene faktisk skjer, er feks bugga hvis vi drar den inn i en tom romlabel
-            }
 
         }
 
@@ -399,7 +395,8 @@ namespace HotellAdmin {
                 if (roomDataList[roomID].wrongRoomType == false) {
 
 					if (roomDataList[roomID].assigned == false) {
-						DataRow row = DatabaseManager.GetRowWithSchema("booking");
+                        listBoxOrders.Items.RemoveAt(index);
+                        DataRow row = DatabaseManager.GetRowWithSchema("booking");
 						row["romID"] = roomID;
 						row["bestillingID"] = orderID;
 						row["fradato"] = flippedFromDate;
@@ -412,16 +409,10 @@ namespace HotellAdmin {
 
                         roomDataList[roomID].assigned = true;
                         ShowRoomData(selectedFloor);
-                    } else {
-                        listBoxOrders.Items.Add(listBoxItems);
-                        Console.WriteLine(listBoxItems);
-                    }
+                    } 
 
-                } else {
-                    listBoxOrders.Items.Add(listBoxItems);
-                    Console.WriteLine(listBoxItems);
-                }
-
+                } 
+           
             }
 
         }
