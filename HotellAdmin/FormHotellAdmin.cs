@@ -282,8 +282,67 @@ namespace HotellAdmin {
 
 		//Sjekk om dataene fylt inn i drop in er riktig
 		private bool ValidateForm() {
-			//Husk sjekk for om den er tom
-			return true;
+			string errorMsg = "";
+			string comboText = dropInComboBox.Text;
+			string fromDate = dropInFromDate.Text;
+			string toDate = dropInToDate.Text;
+			string phoneNumber = dropInPhoneNumber.Text;
+			string firstName = dropInFirstname.Text;
+			string lastName = dropInLastname.Text;
+			bool valid = true;
+
+			if (comboText == "" || comboText == null) {
+				errorMsg += "Du må velge en romtype!\n";
+				valid = false;
+			}
+
+			if(fromDate == "" || fromDate == null) {
+				errorMsg += "Du må velge en fradato!\n";
+				valid = false;
+			}
+
+			if(toDate == "" || toDate == null) {
+				errorMsg += "Du må velge en tildato!\n";
+				valid = false;
+			}
+
+			if(phoneNumber == "" || phoneNumber == null) {
+				errorMsg += "Du må skrive inn et telefonnummer!\n";
+				valid = false;
+			} else if(phoneNumber.Length != 8) {
+				errorMsg += "Telefonnummeret må bestå av 8 tall!\n";
+				valid = false;
+			}
+
+			foreach (char c in phoneNumber) {
+
+				if (c < '0' || c > '9') {
+					valid = false;
+					errorMsg += "Telefonnummeret må bestå av bare tall!\n";
+					break;
+				}
+
+			}
+
+			if(firstName == "" || firstName == null) {
+				errorMsg += "Du må skrive inn et fornavn!\n";
+				valid = false;
+			}
+
+			if(lastName == "" || lastName == null) {
+				errorMsg += "Du må skrive inn et etternavn!\n";
+				valid = false;
+			}
+
+			if(!valid) ShowDropInError(errorMsg);
+			return valid;
+		}
+
+
+		public void ShowDropInError(string errorMsg) {
+			DropInMessage.Text = errorMsg;
+			DropInMessage.Visible = true;
+			DropInMessage.ForeColor = Color.FromArgb(255, 255, 0, 0);
 		}
 
 		// En destructor for å lukke databasetilkoblingen når vi lukker programmet
@@ -461,7 +520,8 @@ namespace HotellAdmin {
 			//"VALUES ('" + roomType + "', '" + fromDate + "', '" + toDate + "', " + tlf + ", '" + foreName + "', '" + afterName + "');");
             DropInMessage.Text = "Bestillingen har nå blitt registrert!";
             DropInMessage.Visible = true;
-            GetOrderData();
+			DropInMessage.ForeColor = Color.FromArgb(0, 0, 0, 255);
+			GetOrderData();
 			ShowOrderData();
         }
 
