@@ -106,5 +106,17 @@ namespace HotellAdmin.Properties {
                 this["PopupLocation"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool AutoSyncXML {
+            get {
+                return ((bool)(this["AutoSyncXML"]));
+            }
+            set {
+                this["AutoSyncXML"] = value;
+            }
+        }
     }
 }

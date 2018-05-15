@@ -75,15 +75,12 @@
 			this.tabOptions = new System.Windows.Forms.TabPage();
 			this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
 			this.optionsPanelLeft = new System.Windows.Forms.Panel();
-			this.optionLabelDatabaseStatus = new System.Windows.Forms.Label();
-			this.optionsStatusHeader = new System.Windows.Forms.Label();
+			this.syncXMLNowButton = new System.Windows.Forms.Button();
+			this.autoSyncXML = new System.Windows.Forms.CheckBox();
+			this.XMLSyncLabel = new System.Windows.Forms.Label();
 			this.optionsHeader = new System.Windows.Forms.Label();
-			this.changeDatabaseStatusButton = new System.Windows.Forms.Button();
 			this.colorBlindMode = new System.Windows.Forms.CheckBox();
 			this.tooltipDatabaseMode = new System.Windows.Forms.ToolTip(this.components);
-			this.iconsPanel = new System.Windows.Forms.Panel();
-			this.labelDatabaseStatus = new System.Windows.Forms.Label();
-			this.iconDatabaseStatus = new System.Windows.Forms.PictureBox();
 			this.headerPictureBox = new System.Windows.Forms.PictureBox();
 			this.tabControl1.SuspendLayout();
 			this.tabBooking.SuspendLayout();
@@ -102,8 +99,6 @@
 			this.tabOptions.SuspendLayout();
 			this.tableLayoutPanel1.SuspendLayout();
 			this.optionsPanelLeft.SuspendLayout();
-			this.iconsPanel.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)(this.iconDatabaseStatus)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.headerPictureBox)).BeginInit();
 			this.SuspendLayout();
 			// 
@@ -816,34 +811,46 @@
 			// 
 			// optionsPanelLeft
 			// 
-			this.optionsPanelLeft.Controls.Add(this.optionLabelDatabaseStatus);
-			this.optionsPanelLeft.Controls.Add(this.optionsStatusHeader);
+			this.optionsPanelLeft.Controls.Add(this.syncXMLNowButton);
+			this.optionsPanelLeft.Controls.Add(this.autoSyncXML);
+			this.optionsPanelLeft.Controls.Add(this.XMLSyncLabel);
 			this.optionsPanelLeft.Controls.Add(this.optionsHeader);
-			this.optionsPanelLeft.Controls.Add(this.changeDatabaseStatusButton);
 			this.optionsPanelLeft.Controls.Add(this.colorBlindMode);
 			this.optionsPanelLeft.Location = new System.Drawing.Point(3, 3);
 			this.optionsPanelLeft.Name = "optionsPanelLeft";
 			this.optionsPanelLeft.Size = new System.Drawing.Size(910, 493);
 			this.optionsPanelLeft.TabIndex = 3;
 			// 
-			// optionLabelDatabaseStatus
+			// syncXMLNowButton
 			// 
-			this.optionLabelDatabaseStatus.AutoSize = true;
-			this.optionLabelDatabaseStatus.Location = new System.Drawing.Point(35, 142);
-			this.optionLabelDatabaseStatus.Name = "optionLabelDatabaseStatus";
-			this.optionLabelDatabaseStatus.Size = new System.Drawing.Size(181, 16);
-			this.optionLabelDatabaseStatus.TabIndex = 8;
-			this.optionLabelDatabaseStatus.Text = "Online databasen er tilkoblet.";
+			this.syncXMLNowButton.Location = new System.Drawing.Point(38, 193);
+			this.syncXMLNowButton.Name = "syncXMLNowButton";
+			this.syncXMLNowButton.Size = new System.Drawing.Size(191, 38);
+			this.syncXMLNowButton.TabIndex = 7;
+			this.syncXMLNowButton.Text = "Synkroniser med XML nå";
+			this.syncXMLNowButton.UseVisualStyleBackColor = true;
+			this.syncXMLNowButton.Click += new System.EventHandler(this.syncXMLNowButton_Click);
 			// 
-			// optionsStatusHeader
+			// autoSyncXML
 			// 
-			this.optionsStatusHeader.AutoSize = true;
-			this.optionsStatusHeader.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.optionsStatusHeader.Location = new System.Drawing.Point(29, 110);
-			this.optionsStatusHeader.Name = "optionsStatusHeader";
-			this.optionsStatusHeader.Size = new System.Drawing.Size(145, 20);
-			this.optionsStatusHeader.TabIndex = 7;
-			this.optionsStatusHeader.Text = "Database Status";
+			this.autoSyncXML.AutoSize = true;
+			this.autoSyncXML.Location = new System.Drawing.Point(38, 156);
+			this.autoSyncXML.Name = "autoSyncXML";
+			this.autoSyncXML.Size = new System.Drawing.Size(232, 20);
+			this.autoSyncXML.TabIndex = 6;
+			this.autoSyncXML.Text = "Synkroniser med XML automatisk?";
+			this.autoSyncXML.UseVisualStyleBackColor = true;
+			this.autoSyncXML.CheckedChanged += new System.EventHandler(this.autoSyncXML_CheckedChanged);
+			// 
+			// XMLSyncLabel
+			// 
+			this.XMLSyncLabel.AutoSize = true;
+			this.XMLSyncLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.XMLSyncLabel.Location = new System.Drawing.Point(27, 115);
+			this.XMLSyncLabel.Name = "XMLSyncLabel";
+			this.XMLSyncLabel.Size = new System.Drawing.Size(168, 20);
+			this.XMLSyncLabel.TabIndex = 5;
+			this.XMLSyncLabel.Text = "XML Synkronisering";
 			// 
 			// optionsHeader
 			// 
@@ -854,16 +861,6 @@
 			this.optionsHeader.Size = new System.Drawing.Size(102, 20);
 			this.optionsHeader.TabIndex = 4;
 			this.optionsHeader.Text = "Innstillinger";
-			// 
-			// changeDatabaseStatusButton
-			// 
-			this.changeDatabaseStatusButton.Location = new System.Drawing.Point(38, 172);
-			this.changeDatabaseStatusButton.Name = "changeDatabaseStatusButton";
-			this.changeDatabaseStatusButton.Size = new System.Drawing.Size(186, 38);
-			this.changeDatabaseStatusButton.TabIndex = 3;
-			this.changeDatabaseStatusButton.Text = "Bruk offline database (XML)";
-			this.changeDatabaseStatusButton.UseVisualStyleBackColor = true;
-			this.changeDatabaseStatusButton.Click += new System.EventHandler(this.changeDatabaseStatusButton_Click);
 			// 
 			// colorBlindMode
 			// 
@@ -879,39 +876,6 @@
 			// tooltipDatabaseMode
 			// 
 			this.tooltipDatabaseMode.ToolTipTitle = "Offline modus";
-			// 
-			// iconsPanel
-			// 
-			this.iconsPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.iconsPanel.BackColor = System.Drawing.Color.Transparent;
-			this.iconsPanel.Controls.Add(this.labelDatabaseStatus);
-			this.iconsPanel.Controls.Add(this.iconDatabaseStatus);
-			this.iconsPanel.Location = new System.Drawing.Point(745, 62);
-			this.iconsPanel.Name = "iconsPanel";
-			this.iconsPanel.Size = new System.Drawing.Size(191, 25);
-			this.iconsPanel.TabIndex = 9;
-			// 
-			// labelDatabaseStatus
-			// 
-			this.labelDatabaseStatus.AutoSize = true;
-			this.labelDatabaseStatus.BackColor = System.Drawing.Color.Transparent;
-			this.labelDatabaseStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.labelDatabaseStatus.Location = new System.Drawing.Point(118, 4);
-			this.labelDatabaseStatus.Name = "labelDatabaseStatus";
-			this.labelDatabaseStatus.Size = new System.Drawing.Size(49, 15);
-			this.labelDatabaseStatus.TabIndex = 4;
-			this.labelDatabaseStatus.Text = "Online";
-			// 
-			// iconDatabaseStatus
-			// 
-			this.iconDatabaseStatus.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.iconDatabaseStatus.BackColor = System.Drawing.Color.Transparent;
-			this.iconDatabaseStatus.Location = new System.Drawing.Point(164, 3);
-			this.iconDatabaseStatus.Name = "iconDatabaseStatus";
-			this.iconDatabaseStatus.Size = new System.Drawing.Size(24, 21);
-			this.iconDatabaseStatus.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-			this.iconDatabaseStatus.TabIndex = 3;
-			this.iconDatabaseStatus.TabStop = false;
 			// 
 			// headerPictureBox
 			// 
@@ -932,7 +896,6 @@
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(948, 605);
-			this.Controls.Add(this.iconsPanel);
 			this.Controls.Add(this.headerPictureBox);
 			this.Controls.Add(this.tabControl1);
 			this.DataBindings.Add(new System.Windows.Forms.Binding("Location", global::HotellAdmin.Properties.Settings.Default, "Location", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
@@ -966,9 +929,6 @@
 			this.tableLayoutPanel1.ResumeLayout(false);
 			this.optionsPanelLeft.ResumeLayout(false);
 			this.optionsPanelLeft.PerformLayout();
-			this.iconsPanel.ResumeLayout(false);
-			this.iconsPanel.PerformLayout();
-			((System.ComponentModel.ISupportInitialize)(this.iconDatabaseStatus)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.headerPictureBox)).EndInit();
 			this.ResumeLayout(false);
 
@@ -1027,15 +987,12 @@
 		private System.Windows.Forms.Label DropInMessage;
         private System.Windows.Forms.CheckBox colorBlindMode;
 		private System.Windows.Forms.Panel optionsPanelLeft;
-		private System.Windows.Forms.PictureBox iconDatabaseStatus;
 		private System.Windows.Forms.ToolTip tooltipDatabaseMode;
-		private System.Windows.Forms.Button changeDatabaseStatusButton;
 		private System.Windows.Forms.Label optionsHeader;
-		private System.Windows.Forms.Label optionsStatusHeader;
-		private System.Windows.Forms.Label optionLabelDatabaseStatus;
-		private System.Windows.Forms.Panel iconsPanel;
-		private System.Windows.Forms.Label labelDatabaseStatus;
 		private System.Windows.Forms.Button currentPeriod;
+		private System.Windows.Forms.Button syncXMLNowButton;
+		private System.Windows.Forms.CheckBox autoSyncXML;
+		private System.Windows.Forms.Label XMLSyncLabel;
 	}
 }
 

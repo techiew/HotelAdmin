@@ -68,6 +68,8 @@ namespace HotellAdmin {
 			Size = Properties.Settings.Default.FormSize;
 			colorBlindMode.Checked = Properties.Settings.Default.ColorBlind;
 			headerPictureBox.BackColor = Color.FromArgb(45, 48, 50);
+			autoSyncXML.Checked = Properties.Settings.Default.AutoSyncXML;
+			DatabaseManager.SetAutoSyncStatus(autoSyncXML.Checked);
 
 			// Disse stopper ekstrem lag og prossessorbruk når vi resizer vinduet
 			ResizeBegin += new EventHandler(FormHotellAdmin_ResizeBegin);
@@ -241,29 +243,26 @@ namespace HotellAdmin {
 			if (result == DialogResult.Cancel) {
 				this.Close();
 				Environment.Exit(0);
-			} else if (result == DialogResult.OK) {
-				DatabaseManager.OpenLocalDatabase();
-				Console.WriteLine("Bruker nå lokal database");
 			} else if (result == DialogResult.Retry) {
 				OpenDatabase();
 			}
 
 		}
 
-		// Endre bilde og tekst på status ikonet oppe i høyre hjørne
+		// Endre bilde og tekst på status ikonet oppe i høyre hjørne -- eksisterer ikke lenger
 		public void UpdateDatabaseStatus(bool status) {
 
-			if (status) {
-				iconDatabaseStatus.Image = statusOnline;
-				labelDatabaseStatus.Text = "Online";
-				optionLabelDatabaseStatus.Text = "Online database er tilkoblet.";
-				changeDatabaseStatusButton.Text = "Bruk offline database (XML)";
-			} else {
-				iconDatabaseStatus.Image = statusOffline;
-				labelDatabaseStatus.Text = "Offline";
-				optionLabelDatabaseStatus.Text = "Offline databasen er i bruk.";
-				changeDatabaseStatusButton.Text = "Koble til online databasen";
-			}
+			//if (status) {
+			//	iconDatabaseStatus.Image = statusOnline;
+			//	labelDatabaseStatus.Text = "Online";
+			//	optionLabelDatabaseStatus.Text = "Online database er tilkoblet.";
+			//	changeDatabaseStatusButton.Text = "Bruk offline database (XML)";
+			//} else {
+			//	iconDatabaseStatus.Image = statusOffline;
+			//	labelDatabaseStatus.Text = "Offline";
+			//	optionLabelDatabaseStatus.Text = "Offline databasen er i bruk.";
+			//	changeDatabaseStatusButton.Text = "Koble til online databasen";
+			//}
 
 		}
 
@@ -493,15 +492,21 @@ namespace HotellAdmin {
             ShowRoomData(1);
         }
 
-		// Database status knappen
-		private void changeDatabaseStatusButton_Click(object sender, EventArgs e) {
+		// Når checkboxen for automatisk XML synkronisering trykkes
+		private void autoSyncXML_CheckedChanged(object sender, EventArgs e) {
 
-			if (DatabaseManager.IsUsingLocalDatabase()) {
-				OpenDatabase();
+			if(autoSyncXML.Checked) {
+				Properties.Settings.Default.AutoSyncXML = true;
 			} else {
-				DatabaseManager.OpenLocalDatabase();
+				Properties.Settings.Default.AutoSyncXML = false;
 			}
 
+			DatabaseManager.SetAutoSyncStatus(autoSyncXML.Checked);
+		}
+
+		// Når XML synkroniseringsknappen trykkes
+		private void syncXMLNowButton_Click(object sender, EventArgs e) {
+			DatabaseManager.SyncXML();
 		}
 
 		// Startes hvis vinduet blir lukket, lagrer innstillinger

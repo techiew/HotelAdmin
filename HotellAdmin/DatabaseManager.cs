@@ -15,6 +15,7 @@ namespace HotellAdmin {
 	    private static bool initialized = false;
 		private static bool connected;
 		private static bool usingLocalDatabase;
+		private static bool autoSyncXML;
 		private static MySqlConnection conn;
 		private static DataSet ds;
 		private static DataTable employeesTable;
@@ -37,6 +38,7 @@ namespace HotellAdmin {
 			conn = null;
 			connected = false;
 			usingLocalDatabase = false;
+			autoSyncXML = true;
 			ds = new DataSet();
 			ds.DataSetName = "HotellAdmin";
 			DatabaseManager.gui = gui;
@@ -65,7 +67,7 @@ namespace HotellAdmin {
 				conn.StateChange += new StateChangeEventHandler(OnStateChange);
 				conn.Open();
 				FillDataSet();
-				MergeLocalAndExternalDatabase();
+				//MergeLocalAndExternalDatabase(); funker ikke ordentlig
 				usingLocalDatabase = false;
 				connected = true;
 
@@ -78,7 +80,7 @@ namespace HotellAdmin {
 
 		}
 
-		// Les data fra XML fil
+		// Les data fra XML fil -- denne brukes ikke lenger
 		public static void OpenLocalDatabase() {
 
 			if (!File.Exists("hotelladmin_database.xml")) {
@@ -175,9 +177,10 @@ namespace HotellAdmin {
 				local.ReadXml("hotelladmin_database.xml");
 			}
 
+			ds.AcceptChanges();
+
 			if(xmlExists && schemaExists) {
-				ds.Merge(local, false, MissingSchemaAction.Add);
-				ds.AcceptChanges();
+				ds.Merge(local, true, MissingSchemaAction.Ignore);
 				MySqlCommandBuilder cbe = new MySqlCommandBuilder(daEmployees);
 				daEmployees.Update(ds, "ansatte");
 				MySqlCommandBuilder cbrt = new MySqlCommandBuilder(daRoomTypes);
@@ -190,8 +193,8 @@ namespace HotellAdmin {
 				daBooking.Update(ds, "booking");
 			}
 
-			ds.WriteXml("hotelladmin_database.xml");
-			ds.WriteXmlSchema("hotelladmin_schema.xml");
+			ds.AcceptChanges();
+			OnUpdate();
 		}
 
 		//public static DataSet Query(string sql) { // ikke bruk denne
@@ -397,7 +400,7 @@ namespace HotellAdmin {
 		// Når det skjer en oppdatering i databasen...
 		private static void OnUpdate() {
 
-			if (!initialized) return;
+			if (!initialized || !autoSyncXML) return;
 
 			ds.WriteXml("hotelladmin_database.xml");
 			ds.WriteXmlSchema("hotelladmin_schema.xml");
@@ -461,6 +464,10 @@ namespace HotellAdmin {
 		// Sjekk om DatabaseManager er initialisert
 		public static bool IsInitialized() {
 			return initialized;
+		}
+
+		public static void SetAutoSyncStatus(bool autoSync) {
+			autoSyncXML = autoSync;
 		}
 
 		// Er databasen tilkoblet? (Online)

@@ -25,7 +25,6 @@
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DatabaseErrorWindow));
 			this.dewRetry = new System.Windows.Forms.Button();
-			this.dewUseLocal = new System.Windows.Forms.Button();
 			this.dewCancel = new System.Windows.Forms.Button();
 			this.DatabaseErrorWindowText = new System.Windows.Forms.Label();
 			this.pictureBox1 = new System.Windows.Forms.PictureBox();
@@ -35,24 +34,13 @@
 			// dewRetry
 			// 
 			this.dewRetry.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.dewRetry.Location = new System.Drawing.Point(15, 113);
+			this.dewRetry.Location = new System.Drawing.Point(147, 113);
 			this.dewRetry.Name = "dewRetry";
 			this.dewRetry.Size = new System.Drawing.Size(90, 31);
 			this.dewRetry.TabIndex = 0;
 			this.dewRetry.Text = "Prøv på nytt";
 			this.dewRetry.UseVisualStyleBackColor = true;
 			this.dewRetry.Click += new System.EventHandler(this.dewRetry_Click);
-			// 
-			// dewUseLocal
-			// 
-			this.dewUseLocal.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.dewUseLocal.Location = new System.Drawing.Point(123, 113);
-			this.dewUseLocal.Name = "dewUseLocal";
-			this.dewUseLocal.Size = new System.Drawing.Size(110, 31);
-			this.dewUseLocal.TabIndex = 1;
-			this.dewUseLocal.Text = "Bruk lokal database";
-			this.dewUseLocal.UseVisualStyleBackColor = true;
-			this.dewUseLocal.Click += new System.EventHandler(this.dewUseLocal_Click);
 			// 
 			// dewCancel
 			// 
@@ -72,8 +60,7 @@
 			this.DatabaseErrorWindowText.Name = "DatabaseErrorWindowText";
 			this.DatabaseErrorWindowText.Size = new System.Drawing.Size(258, 73);
 			this.DatabaseErrorWindowText.TabIndex = 3;
-			this.DatabaseErrorWindowText.Text = "Kunne ikke koble til den eksterne databasen, vil du bruke den lokale databasen el" +
-    "ler prøve på nytt?";
+			this.DatabaseErrorWindowText.Text = "Kunne ikke koble til databasen, vil du prøve på nytt?";
 			// 
 			// pictureBox1
 			// 
@@ -93,11 +80,11 @@
 			this.Controls.Add(this.pictureBox1);
 			this.Controls.Add(this.DatabaseErrorWindowText);
 			this.Controls.Add(this.dewCancel);
-			this.Controls.Add(this.dewUseLocal);
 			this.Controls.Add(this.dewRetry);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "DatabaseErrorWindow";
 			this.Text = "Database Error";
+			this.Load += new System.EventHandler(this.DatabaseErrorWindow_Load);
 			((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
 			this.ResumeLayout(false);
 
@@ -106,7 +93,6 @@
 		#endregion
 
 		private System.Windows.Forms.Button dewRetry;
-		private System.Windows.Forms.Button dewUseLocal;
 		private System.Windows.Forms.Button dewCancel;
 		private System.Windows.Forms.Label DatabaseErrorWindowText;
 		private System.Windows.Forms.PictureBox pictureBox1;
