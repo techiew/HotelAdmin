@@ -453,7 +453,8 @@ namespace HotellAdmin {
 
 		// Hent ut en "eksempelrad" med riktig skjema fra en angitt tabell
 		public static DataRow GetRowWithSchema(string tableName) {
-			return ds.Tables[tableName].NewRow();
+			DataSet clone = ds.Clone();
+			return clone.Tables[tableName].NewRow();
 		}
 
 		// Hent ut en hel tabell
